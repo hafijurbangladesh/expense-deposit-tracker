@@ -1,0 +1,1591 @@
+[
+{
+  "model": "sessions.session",
+  "pk": "bmdjqrjzz62yzm8o34lmewyn9vykk9u2",
+  "fields": {
+    "session_data": ".eJxVjMsKwyAQRf9l1kV81ESz7D7fIKPj1LTFQExWpf9ehCza1YVzDvcNAY-9hKPlLSwEE2i4_LKI6ZlrF_TAel9FWuu-LVH0RJy2iXml_Lqd7d9BwVZggkGR4agxDYayzFY6ZvQpjlYym5HZKyQkMpKjl5zYOaRrItlXWQ2fLx4cOX8:1wNazX:4-faCOgKLGRsrDHkGyvFzfMG00AQkqsyab0qtF-FBwk",
+    "expire_date": "2026-05-28T18:41:03.706Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "e8wu1b9qpufnq0dxfzzecwl6yx5q76rk",
+  "fields": {
+    "session_data": "e30:1wNW1y:iAiM6G73BZ4k4deDJIeFENvChdKUKS0BPJbVofgb2i8",
+    "expire_date": "2026-05-28T13:23:14.316Z"
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$ME14sZKgbfT3022mdXD4IZ$2PDCuZ3fSFU75TXpdPweNWgYcSWo1KJ+oRNpSkkgqOE=",
+    "last_login": "2026-05-30T15:29:51.490Z",
+    "is_superuser": false,
+    "username": "hafijur",
+    "first_name": "Md. Hafijur",
+    "last_name": "Rahman",
+    "email": "hafijur.bangladesh@gmail.com",
+    "is_staff": false,
+    "date_joined": "2026-05-14T13:21:23.339Z",
+    "role": "flat_owner",
+    "phone": "01717508447",
+    "address": null,
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$m4JWOT1F75WEiOP9uIN9Qu$QZHzQrCU7uG6F8T4fo8GkDUqo4OrXImzpLCrm+r1sc0=",
+    "last_login": "2026-06-03T09:42:01.516Z",
+    "is_superuser": false,
+    "username": "manager",
+    "first_name": "Faruk",
+    "last_name": "Ahmed",
+    "email": "manager@gmail.com",
+    "is_staff": false,
+    "date_joined": "2026-05-14T13:32:42Z",
+    "role": "manager",
+    "phone": "01717508447",
+    "address": "",
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$gO0NivH9dz493i2calchxy$2z3Boy3dSQxbrHrJHEw5yKp8AwRL4ypiIgEIkxHOYXI=",
+    "last_login": "2026-05-30T15:46:42.532Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@gmail.com",
+    "is_staff": true,
+    "date_joined": "2026-05-14T13:40:35.430Z",
+    "role": "flat_owner",
+    "phone": null,
+    "address": null,
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$sPhHsXJBZdK1IqNmn2x5LN$qujotmGYrowYrIKM/oh8i9e+wbaIjm79kIQFJomekZc=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "raihan",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "date_joined": "2026-05-14T14:04:37.167Z",
+    "role": "flat_owner",
+    "phone": null,
+    "address": "",
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$ZfKjoTelWfumkZfQFN2GbV$AieOdaAFEuF2uubqT2J9zXBcgMBmErRElmWhrnyZF8E=",
+    "last_login": "2026-05-30T13:46:45.077Z",
+    "is_superuser": false,
+    "username": "flatowner1",
+    "first_name": "",
+    "last_name": "",
+    "email": "fo@gmail.com",
+    "is_staff": false,
+    "date_joined": "2026-05-30T13:46:06.916Z",
+    "role": "flat_owner",
+    "phone": "",
+    "address": null,
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$avf6cN6YedvqvOY5IaJT6w$Vpk5TDz75V1w2DxJ5ghu9wT4O4Mkvmwnn0XkgZ8clSk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "mortuza",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "date_joined": "2026-05-30T14:52:17.751Z",
+    "role": "flat_owner",
+    "phone": null,
+    "address": "",
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$ZBceSMnIZesaxwSthLWLGE$EDKYN63jn6Vkzw5zer7mVrF1yWB+6+6brySwfvfFSwM=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "badsha",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "date_joined": "2026-05-30T14:53:15.329Z",
+    "role": "flat_owner",
+    "phone": null,
+    "address": "",
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$GN1bcCZmt2no7d7lAL7YUk$PI0FmFngdMwg+xNPXZhI6Y05JAcL3hYqEZYSGKpbV7I=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "faruk",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "date_joined": "2026-05-30T14:54:08.451Z",
+    "role": "flat_owner",
+    "phone": null,
+    "address": "",
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$NmvULTnpKU11nNGkffHvGf$HcQejFifENUrf2GOXDGWSMkrWvSHKdZ5h780pWSIEZU=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "reyad",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "date_joined": "2026-05-30T14:55:00.568Z",
+    "role": "flat_owner",
+    "phone": null,
+    "address": "",
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Vs4enJ1vYgO7C0bfzOtj5A$vktmaEYTFZTJlEBP82JzonCxo+mMSABImW52a2cLGCE=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "siraj",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "date_joined": "2026-05-30T14:55:42.583Z",
+    "role": "flat_owner",
+    "phone": null,
+    "address": "",
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$NedAXUWLnYqoxR20AMQRBv$XiS6h6CGMavnx1qc1M4TGZIWbgfdUUqdwb2mzhYHf4E=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "monuar",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "date_joined": "2026-05-30T14:56:21.349Z",
+    "role": "flat_owner",
+    "phone": null,
+    "address": "",
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.house",
+  "pk": 1,
+  "fields": {
+    "name": "Samprity Abason",
+    "address": "333/1, Akota Road, Moniruddin market, West Ahmednagar, Mirpur-1, Dhaka.",
+    "city": "Dhaka",
+    "state": "Bangladesh",
+    "pincode": "1216",
+    "total_flats": 16,
+    "manager": [
+      "manager"
+    ],
+    "created_at": "2026-05-14T13:43:28.603Z",
+    "updated_at": "2026-05-14T13:43:28.603Z"
+  }
+},
+{
+  "model": "core.flat",
+  "pk": 1,
+  "fields": {
+    "house": 1,
+    "flat_number": "7A",
+    "owner": [
+      "hafijur"
+    ],
+    "carpet_area": "320.00",
+    "monthly_charge": "3500.00",
+    "is_occupied": true,
+    "created_at": "2026-05-14T13:44:03.428Z",
+    "updated_at": "2026-05-14T13:44:03.428Z"
+  }
+},
+{
+  "model": "core.flat",
+  "pk": 2,
+  "fields": {
+    "house": 1,
+    "flat_number": "7B",
+    "owner": [
+      "raihan"
+    ],
+    "carpet_area": null,
+    "monthly_charge": "3500.00",
+    "is_occupied": true,
+    "created_at": "2026-05-14T14:04:56.011Z",
+    "updated_at": "2026-05-14T14:04:56.011Z"
+  }
+},
+{
+  "model": "core.flat",
+  "pk": 3,
+  "fields": {
+    "house": 1,
+    "flat_number": "6A",
+    "owner": [
+      "mortuza"
+    ],
+    "carpet_area": null,
+    "monthly_charge": "3500.00",
+    "is_occupied": true,
+    "created_at": "2026-05-30T14:52:43.823Z",
+    "updated_at": "2026-05-30T14:52:43.823Z"
+  }
+},
+{
+  "model": "core.flat",
+  "pk": 4,
+  "fields": {
+    "house": 1,
+    "flat_number": "6B",
+    "owner": [
+      "badsha"
+    ],
+    "carpet_area": null,
+    "monthly_charge": "3500.00",
+    "is_occupied": true,
+    "created_at": "2026-05-30T14:53:32.808Z",
+    "updated_at": "2026-05-30T15:43:02.337Z"
+  }
+},
+{
+  "model": "core.flat",
+  "pk": 5,
+  "fields": {
+    "house": 1,
+    "flat_number": "8A",
+    "owner": [
+      "faruk"
+    ],
+    "carpet_area": null,
+    "monthly_charge": "3500.00",
+    "is_occupied": true,
+    "created_at": "2026-05-30T14:54:18.262Z",
+    "updated_at": "2026-05-30T15:43:14.525Z"
+  }
+},
+{
+  "model": "core.flat",
+  "pk": 6,
+  "fields": {
+    "house": 1,
+    "flat_number": "8B",
+    "owner": [
+      "reyad"
+    ],
+    "carpet_area": null,
+    "monthly_charge": "3500.00",
+    "is_occupied": true,
+    "created_at": "2026-05-30T14:55:09.655Z",
+    "updated_at": "2026-05-30T14:55:09.655Z"
+  }
+},
+{
+  "model": "core.flat",
+  "pk": 7,
+  "fields": {
+    "house": 1,
+    "flat_number": "5A",
+    "owner": [
+      "siraj"
+    ],
+    "carpet_area": null,
+    "monthly_charge": "3500.00",
+    "is_occupied": true,
+    "created_at": "2026-05-30T14:55:51.385Z",
+    "updated_at": "2026-05-30T14:55:51.385Z"
+  }
+},
+{
+  "model": "core.flat",
+  "pk": 8,
+  "fields": {
+    "house": 1,
+    "flat_number": "5B",
+    "owner": [
+      "monuar"
+    ],
+    "carpet_area": null,
+    "monthly_charge": "3500.00",
+    "is_occupied": true,
+    "created_at": "2026-05-30T14:56:30.294Z",
+    "updated_at": "2026-05-30T14:56:30.294Z"
+  }
+},
+{
+  "model": "core.expensecategory",
+  "pk": 1,
+  "fields": {
+    "name": "Electricity Bill",
+    "description": "",
+    "icon": ""
+  }
+},
+{
+  "model": "core.expensecategory",
+  "pk": 2,
+  "fields": {
+    "name": "Gas purchase",
+    "description": "",
+    "icon": ""
+  }
+},
+{
+  "model": "core.expensecategory",
+  "pk": 3,
+  "fields": {
+    "name": "Care taker salary",
+    "description": "",
+    "icon": ""
+  }
+},
+{
+  "model": "core.expensecategory",
+  "pk": 4,
+  "fields": {
+    "name": "Wastage Bill",
+    "description": "",
+    "icon": ""
+  }
+},
+{
+  "model": "core.expensecategory",
+  "pk": 5,
+  "fields": {
+    "name": "Road Security",
+    "description": "",
+    "icon": ""
+  }
+},
+{
+  "model": "core.expense",
+  "pk": 3,
+  "fields": {
+    "house": 1,
+    "category": 3,
+    "amount": "15000.00",
+    "description": "",
+    "bill_date": "2026-05-03",
+    "payment_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:50:55.528Z",
+    "updated_at": "2026-05-30T15:50:55.528Z"
+  }
+},
+{
+  "model": "core.expense",
+  "pk": 4,
+  "fields": {
+    "house": 1,
+    "category": 5,
+    "amount": "200.00",
+    "description": "",
+    "bill_date": "2026-05-01",
+    "payment_date": "2026-05-02",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T16:35:59.072Z",
+    "updated_at": "2026-05-30T16:35:59.072Z"
+  }
+},
+{
+  "model": "core.expense",
+  "pk": 5,
+  "fields": {
+    "house": 1,
+    "category": 1,
+    "amount": "3000.00",
+    "description": "",
+    "bill_date": "2026-05-01",
+    "payment_date": "2026-05-09",
+    "month": "2026-04-01",
+    "receipt": "receipts/expenses/2026/05/Module3-assignment-12.png",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T16:39:13.578Z",
+    "updated_at": "2026-05-30T16:39:13.578Z"
+  }
+},
+{
+  "model": "core.expense",
+  "pk": 6,
+  "fields": {
+    "house": 1,
+    "category": 2,
+    "amount": "4000.00",
+    "description": "",
+    "bill_date": "2026-05-08",
+    "payment_date": "2026-05-09",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T16:39:13.593Z",
+    "updated_at": "2026-05-30T16:39:13.593Z"
+  }
+},
+{
+  "model": "core.expense",
+  "pk": 7,
+  "fields": {
+    "house": 1,
+    "category": 4,
+    "amount": "100.00",
+    "description": "",
+    "bill_date": "2026-05-02",
+    "payment_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "receipts/expenses/2026/05/Module3-assignment-13.png",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T16:39:59.421Z",
+    "updated_at": "2026-05-30T16:39:59.421Z"
+  }
+},
+{
+  "model": "core.expense",
+  "pk": 8,
+  "fields": {
+    "house": 1,
+    "category": 3,
+    "amount": "15000.00",
+    "description": "its a test",
+    "bill_date": "2026-05-30",
+    "payment_date": "2026-05-30",
+    "month": "2026-05-01",
+    "receipt": "receipts/expenses/2026/05/Module3-assignment-11.png",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T16:45:18.156Z",
+    "updated_at": "2026-05-30T16:45:18.156Z"
+  }
+},
+{
+  "model": "core.depositcategory",
+  "pk": 2,
+  "fields": {
+    "name": "Monthly Parking Income",
+    "description": ""
+  }
+},
+{
+  "model": "core.depositcategory",
+  "pk": 4,
+  "fields": {
+    "name": "Service Charge",
+    "description": ""
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 27,
+  "fields": {
+    "house": 1,
+    "flat": 7,
+    "category": null,
+    "amount": "3500.00",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:40:47.057Z",
+    "updated_at": "2026-05-30T15:40:47.057Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 28,
+  "fields": {
+    "house": 1,
+    "flat": 8,
+    "category": null,
+    "amount": "3500.00",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:40:47.068Z",
+    "updated_at": "2026-05-30T15:40:47.068Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 29,
+  "fields": {
+    "house": 1,
+    "flat": 3,
+    "category": null,
+    "amount": "3500.00",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:40:47.077Z",
+    "updated_at": "2026-05-30T15:40:47.077Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 30,
+  "fields": {
+    "house": 1,
+    "flat": 4,
+    "category": null,
+    "amount": "3499.98",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:40:47.086Z",
+    "updated_at": "2026-05-30T15:40:47.086Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 31,
+  "fields": {
+    "house": 1,
+    "flat": 1,
+    "category": null,
+    "amount": "3500.00",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:40:47.095Z",
+    "updated_at": "2026-05-30T15:40:47.095Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 32,
+  "fields": {
+    "house": 1,
+    "flat": 2,
+    "category": null,
+    "amount": "3500.00",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:40:47.105Z",
+    "updated_at": "2026-05-30T15:40:47.105Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 33,
+  "fields": {
+    "house": 1,
+    "flat": 5,
+    "category": null,
+    "amount": "3499.98",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:40:47.113Z",
+    "updated_at": "2026-05-30T15:40:47.113Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 34,
+  "fields": {
+    "house": 1,
+    "flat": 6,
+    "category": null,
+    "amount": "3500.00",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-03",
+    "month": "2026-04-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:40:47.122Z",
+    "updated_at": "2026-05-30T15:40:47.122Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 35,
+  "fields": {
+    "house": 1,
+    "flat": 7,
+    "category": null,
+    "amount": "3500.00",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-30",
+    "month": "2026-05-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:45:01.554Z",
+    "updated_at": "2026-05-30T15:45:01.554Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 36,
+  "fields": {
+    "house": 1,
+    "flat": 8,
+    "category": null,
+    "amount": "3500.00",
+    "description": "Monthly Service Charge",
+    "deposit_date": "2026-05-30",
+    "month": "2026-05-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:45:01.565Z",
+    "updated_at": "2026-05-30T15:45:01.565Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 37,
+  "fields": {
+    "house": 1,
+    "flat": 6,
+    "category": null,
+    "amount": "3500.00",
+    "description": "",
+    "deposit_date": "2026-05-30",
+    "month": "2026-05-01",
+    "receipt": "",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T15:45:58.836Z",
+    "updated_at": "2026-05-30T15:45:58.836Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 38,
+  "fields": {
+    "house": 1,
+    "flat": null,
+    "category": 2,
+    "amount": "13700.00",
+    "description": "parking income from reyad vai end",
+    "deposit_date": "2026-05-01",
+    "month": "2026-04-01",
+    "receipt": "receipts/deposits/2026/05/Module3-assignment-9.png",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T16:52:03.954Z",
+    "updated_at": "2026-05-30T16:52:03.954Z"
+  }
+},
+{
+  "model": "core.deposit",
+  "pk": 39,
+  "fields": {
+    "house": 1,
+    "flat": null,
+    "category": 2,
+    "amount": "38200.00",
+    "description": "march month - parking deposite",
+    "deposit_date": "2026-05-01",
+    "month": "2026-03-01",
+    "receipt": "receipts/deposits/2026/05/Module3-assignment-3.png",
+    "added_by": [
+      "manager"
+    ],
+    "created_at": "2026-05-30T17:02:08.034Z",
+    "updated_at": "2026-05-30T17:02:08.034Z"
+  }
+},
+{
+  "model": "core.monthlysummary",
+  "pk": 1,
+  "fields": {
+    "house": 1,
+    "month": "2026-04-30",
+    "total_expenses": "0.00",
+    "total_deposits": "0.00",
+    "balance": "0.00",
+    "updated_at": "2026-05-30T15:30:52.667Z"
+  }
+},
+{
+  "model": "core.monthlysummary",
+  "pk": 2,
+  "fields": {
+    "house": 1,
+    "month": "2026-04-29",
+    "total_expenses": "0.00",
+    "total_deposits": "0.00",
+    "balance": "0.00",
+    "updated_at": "2026-05-30T15:30:52.665Z"
+  }
+},
+{
+  "model": "core.monthlysummary",
+  "pk": 3,
+  "fields": {
+    "house": 1,
+    "month": "2026-04-23",
+    "total_expenses": "0.00",
+    "total_deposits": "0.00",
+    "balance": "0.00",
+    "updated_at": "2026-05-30T15:30:52.632Z"
+  }
+},
+{
+  "model": "core.monthlysummary",
+  "pk": 4,
+  "fields": {
+    "house": 1,
+    "month": "2026-03-31",
+    "total_expenses": "0.00",
+    "total_deposits": "0.00",
+    "balance": "0.00",
+    "updated_at": "2026-05-30T15:30:52.664Z"
+  }
+},
+{
+  "model": "core.monthlysummary",
+  "pk": 5,
+  "fields": {
+    "house": 1,
+    "month": "2026-05-01",
+    "total_expenses": "15000.00",
+    "total_deposits": "10500.00",
+    "balance": "-4500.00",
+    "updated_at": "2026-05-30T16:45:18.168Z"
+  }
+},
+{
+  "model": "core.monthlysummary",
+  "pk": 6,
+  "fields": {
+    "house": 1,
+    "month": "2026-04-01",
+    "total_expenses": "22300.00",
+    "total_deposits": "41699.96",
+    "balance": "19399.96",
+    "updated_at": "2026-05-30T16:52:03.968Z"
+  }
+},
+{
+  "model": "core.monthlysummary",
+  "pk": 7,
+  "fields": {
+    "house": 1,
+    "month": "2026-03-01",
+    "total_expenses": "0.00",
+    "total_deposits": "38200.00",
+    "balance": "38200.00",
+    "updated_at": "2026-05-30T17:02:08.049Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-05-14T13:43:28.606Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "house"
+    ],
+    "object_id": "1",
+    "object_repr": "Samprity Abason",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-05-14T13:44:03.431Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "1",
+    "object_repr": "Samprity Abason - Flat 7A",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-05-14T14:00:10.363Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "expensecategory"
+    ],
+    "object_id": "1",
+    "object_repr": "Electricity Bill",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-05-14T14:00:17.616Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "expensecategory"
+    ],
+    "object_id": "2",
+    "object_repr": "Gas Bill",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-05-14T14:00:46.605Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "expensecategory"
+    ],
+    "object_id": "3",
+    "object_repr": "Care taker salary",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-05-14T14:01:29.528Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "expensecategory"
+    ],
+    "object_id": "4",
+    "object_repr": "Wastage Bill",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-05-14T14:02:07.591Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "expensecategory"
+    ],
+    "object_id": "2",
+    "object_repr": "Gas purchase",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Name\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2026-05-14T14:02:41.953Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "expensecategory"
+    ],
+    "object_id": "5",
+    "object_repr": "Road Security",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2026-05-14T14:02:54.850Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "depositcategory"
+    ],
+    "object_id": "1",
+    "object_repr": "Monthly Service Charge",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2026-05-14T14:03:22.239Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "depositcategory"
+    ],
+    "object_id": "2",
+    "object_repr": "Monthly Parking Income",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2026-05-14T14:04:38.061Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "4",
+    "object_repr": "raihan (Flat Owner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2026-05-14T14:04:56.014Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "2",
+    "object_repr": "Samprity Abason - Flat 7B",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2026-05-14T14:07:37.177Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "deposit"
+    ],
+    "object_id": "1",
+    "object_repr": "Monthly Service Charge - ₹3500 (April 2026)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2026-05-14T14:08:16.701Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "deposit"
+    ],
+    "object_id": "2",
+    "object_repr": "Monthly Service Charge - ₹3500 (April 2026)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2026-05-14T14:08:57.403Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "expense"
+    ],
+    "object_id": "1",
+    "object_repr": "Care taker salary - ₹15000 (April 2026)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2026-05-14T16:42:21.547Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "deposit"
+    ],
+    "object_id": "3",
+    "object_repr": "Monthly Service Charge - ₹3500 (March 2026)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2026-05-14T16:43:15.849Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "deposit"
+    ],
+    "object_id": "4",
+    "object_repr": "Monthly Service Charge - ₹3500 (March 2026)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2026-05-14T16:44:18.756Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "expense"
+    ],
+    "object_id": "2",
+    "object_repr": "Care taker salary - ₹15000 (March 2026)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2026-05-30T13:48:53.260Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "1",
+    "object_repr": "Md. Hafijur Rahman (Flat Owner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"password\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2026-05-30T13:49:32.896Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "4",
+    "object_repr": "raihan (Flat Owner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"password\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2026-05-30T13:50:21.791Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "2",
+    "object_repr": "manager Rahman (Manager)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"password\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2026-05-30T13:52:36.415Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "2",
+    "object_repr": "Faruk Ahmed (Manager)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"First name\", \"Last name\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2026-05-30T14:52:18.841Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "6",
+    "object_repr": "mortuza (Flat Owner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 24,
+  "fields": {
+    "action_time": "2026-05-30T14:52:43.826Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "3",
+    "object_repr": "Samprity Abason - Flat 6A",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 25,
+  "fields": {
+    "action_time": "2026-05-30T14:53:16.243Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "7",
+    "object_repr": "badsha (Flat Owner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 26,
+  "fields": {
+    "action_time": "2026-05-30T14:53:32.810Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "4",
+    "object_repr": "Samprity Abason - Flat 6B",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 27,
+  "fields": {
+    "action_time": "2026-05-30T14:54:09.395Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "8",
+    "object_repr": "faruk (Flat Owner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 28,
+  "fields": {
+    "action_time": "2026-05-30T14:54:18.265Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "5",
+    "object_repr": "Samprity Abason - Flat 8A",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 29,
+  "fields": {
+    "action_time": "2026-05-30T14:55:01.473Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "9",
+    "object_repr": "reyad (Flat Owner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 30,
+  "fields": {
+    "action_time": "2026-05-30T14:55:09.658Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "6",
+    "object_repr": "Samprity Abason - Flat 8B",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 31,
+  "fields": {
+    "action_time": "2026-05-30T14:55:43.492Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "10",
+    "object_repr": "siraj (Flat Owner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 32,
+  "fields": {
+    "action_time": "2026-05-30T14:55:51.388Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "7",
+    "object_repr": "Samprity Abason - Flat 5A",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 33,
+  "fields": {
+    "action_time": "2026-05-30T14:56:22.240Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "customuser"
+    ],
+    "object_id": "11",
+    "object_repr": "monuar (Flat Owner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 34,
+  "fields": {
+    "action_time": "2026-05-30T14:56:30.298Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "8",
+    "object_repr": "Samprity Abason - Flat 5B",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 35,
+  "fields": {
+    "action_time": "2026-05-30T15:42:49.356Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "4",
+    "object_repr": "Samprity Abason - Flat 6B",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Monthly charge\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 36,
+  "fields": {
+    "action_time": "2026-05-30T15:43:02.339Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "4",
+    "object_repr": "Samprity Abason - Flat 6B",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Monthly charge\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 37,
+  "fields": {
+    "action_time": "2026-05-30T15:43:14.526Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "flat"
+    ],
+    "object_id": "5",
+    "object_repr": "Samprity Abason - Flat 8A",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Monthly charge\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 38,
+  "fields": {
+    "action_time": "2026-05-30T15:47:13.303Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "depositcategory"
+    ],
+    "object_id": "1",
+    "object_repr": "Monthly Service Charge",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 39,
+  "fields": {
+    "action_time": "2026-05-30T15:47:20.832Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "core",
+      "depositcategory"
+    ],
+    "object_id": "3",
+    "object_repr": "Service Charge",
+    "action_flag": 3,
+    "change_message": ""
+  }
+}
+]
