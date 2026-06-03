@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Monthly Report - House Expense Manager{% endblock %}
+
+{% block content %}
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% else %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="fas fa-file-pdf"></i> {{ house.name }} - Monthly Report</h1>
+            <p class="text-muted">{{ month|date:"F Y" }}</p>
+        </div>
+    </div>
+
+    {% if summary %}
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card bg-success">
+                    <h6>Total Income</h6>
+                    <div class="amount">₹{{ summary.total_deposits|floatformat:2 }}</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card bg-warning">
+                    <h6>Total Expenses</h6>
+                    <div class="amount">₹{{ summary.total_expenses|floatformat:2 }}</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card {% if summary.balance >= 0 %}bg-info{% else %}bg-danger{% endif %}">
+                    <h6>Balance</h6>
+                    <div class="amount">₹{{ summary.balance|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">Deposits</h5>
+                </div>
+                <div class="card-body">
+                    {% if deposits %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Flat</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for deposit in deposits %}
+                                        <tr>
+                                            <td>{{ deposit.category.name|default:"Deposit" }}</td>
+                                            <td>{{ deposit.flat.flat_number|default:"-" }}</td>
+                                            <td class="text-success"><strong>₹{{ deposit.amount|floatformat:2 }}</strong></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No deposits this month.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">Expenses</h5>
+                </div>
+                <div class="card-body">
+                    {% if expenses %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for expense in expenses %}
+                                        <tr>
+                                            <td>{{ expense.category.name }}</td>
+                                            <td>{{ expense.description|truncatewords:3 }}</td>
+                                            <td class="text-warning"><strong>₹{{ expense.amount|floatformat:2 }}</strong></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No expenses this month.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

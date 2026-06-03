@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Annual Report - House Expense Manager{% endblock %}
+
+{% block content %}
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% else %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="fas fa-chart-bar"></i> {{ house.name }} - Annual Report</h1>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card bg-success">
+                <h6>Total Income (Last 12 Months)</h6>
+                <div class="amount">₹{{ total_deposits|floatformat:2 }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card bg-warning">
+                <h6>Total Expenses (Last 12 Months)</h6>
+                <div class="amount">₹{{ total_expenses|floatformat:2 }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card {% if total_balance >= 0 %}bg-info{% else %}bg-danger{% endif %}">
+                <h6>Annual Balance</h6>
+                <div class="amount">₹{{ total_balance|floatformat:2 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-light border-bottom">
+            <h5 class="mb-0">Monthly Trend</h5>
+        </div>
+        <div class="card-body">
+            <div style="position: relative; height: 400px;">
+                <canvas id="annualChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header bg-light border-bottom">
+            <h5 class="mb-0">Monthly Summary</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Income</th>
+                            <th>Expenses</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for summary in monthly_summaries %}
+                            <tr>
+                                <td><strong>{{ summary.month|date:"M Y" }}</strong></td>
+                                <td class="text-success">₹{{ summary.total_deposits|floatformat:2 }}</td>
+                                <td class="text-warning">₹{{ summary.total_expenses|floatformat:2 }}</td>
+                                <td class="{% if summary.balance >= 0 %}text-info{% else %}text-danger{% endif %}">
+                                    ₹{{ summary.balance|floatformat:2 }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% block extra_js %}
+    <script>
+        {% if monthly_summaries %}
+            const summaries = [
+                {% for summary in monthly_summaries %}
+                    { month: '{{ summary.month|date:"M Y" }}', income: {{ summary.total_deposits }}, expense: {{ summary.total_expenses }} },
+                {% endfor %}
+            ];
+            
+            const labels = summaries.map(s => s.month).reverse();
+            const incomeData = summaries.map(s => s.income).reverse();
+            const expenseData = summaries.map(s => s.expense).reverse();
+            
+            const ctx = document.getElementById('annualChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Income',
+                            data: incomeData,
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Expenses',
+                            data: expenseData,
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        {% endif %}
+    </script>
+{% endblock %}
+{% endblock %}

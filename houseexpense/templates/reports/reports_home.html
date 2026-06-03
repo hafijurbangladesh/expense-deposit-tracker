@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports - House Expense Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-file-alt"></i> Reports</h1>
+    </div>
+</div>
+
+{% if is_manager %}
+    <div class="row">
+        {% if house %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-light border-bottom">
+                        <h5 class="mb-0">{{ house.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Select a report type for Samprity Abason:</p>
+                        <a href="{% url 'reports:category_report' house.id %}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                            <i class="fas fa-chart-pie"></i> Category Wise
+                        </a>
+                        <a href="{% url 'reports:annual_report' house.id %}" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                            <i class="fas fa-calendar"></i> Annual Report
+                        </a>
+                        <a href="{% url 'reports:flat_wise_report' house.id %}" class="btn btn-outline-info btn-sm w-100">
+                            <i class="fas fa-door-open"></i> Flat Wise
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-warning">No house configured yet.</div>
+            </div>
+        {% endif %}
+    </div>
+{% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle"></i> Reports are available only for managers.
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Collect Service Charge - Samprity Abason{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-coins"></i> Collect Service Charge</h1>
+        <p class="text-muted">Collect monthly service charge for selected flats.</p>
+    </div>
+</div>
+
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% else %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="mb-3">{{ house.name }}</h5>
+
+            <form method="get" class="row g-3 align-items-end mb-4" id="month-load-form">
+                <div class="col-md-6">
+                    <label class="form-label small">Month</label>
+                    {{ form.month }}
+                </div>
+            </form>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const monthInput = document.querySelector('#month-load-form input[name="month"]');
+                    if (monthInput) {
+                        monthInput.addEventListener('change', function () {
+                            this.form.submit();
+                        });
+                    }
+                });
+            </script>
+
+            {% if month_selected %}
+                {% if paid_flats.exists %}
+                    <div class="alert alert-warning">
+                        These flats have already paid service charge for {{ selected_month|date:'F Y' }}:
+                        <strong>
+                            {% for flat in paid_flats %}
+                                {{ flat.flat_number }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </strong>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success">
+                        No flats have paid the service charge for {{ selected_month|date:'F Y' }} yet.
+                    </div>
+                {% endif %}
+
+                {% if unpaid_flats %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="month" value="{{ selected_month|date:'Y-m' }}" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label small">Month</label>
+                                <input type="month" class="form-control" value="{{ selected_month|date:'Y-m' }}" disabled>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label small">Deposit Date</label>
+                                {{ form.deposit_date }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small">Amount (optional)</label>
+                            {{ form.amount }}
+                            <div class="form-text">Leave blank to use each flat's default monthly charge.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small">Flats</label>
+                            {{ form.flats }}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success" type="submit">Collect for selected flats</button>
+                            <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="alert alert-success">
+                        All flats have already paid the service charge for {{ selected_month|date:'F Y' }}.
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

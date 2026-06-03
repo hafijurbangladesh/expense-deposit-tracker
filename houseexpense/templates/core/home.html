@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Samprity Abason{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="min-height: calc(100vh - 120px);">
+  <div class="row gx-3 h-100 align-items-center justify-content-center">
+    <div class="col-xl-4 col-lg-5 col-md-6 col-sm-10">
+      <div class="p-5 rounded-4 text-white" style="background: linear-gradient(135deg,#0f3340,#184a4f); min-height: 420px;">
+        <h1 class="h2 fw-bold mb-3">Samprity Abason</h1>
+        <p class="mb-4 text-white-75">Expense tracking for your house, simplified.</p>
+        <hr class="border-white-25">
+        <ul class="list-unstyled small opacity-85 mb-0">
+          <li class="mb-3"><i class="fas fa-check-circle me-2 text-success"></i> Deposit and expense records</li>
+          <li class="mb-3"><i class="fas fa-check-circle me-2 text-success"></i> Manager and owner access</li>
+          <li class="mb-3"><i class="fas fa-check-circle me-2 text-success"></i> Clear summaries and reports</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-4 col-md-5 col-sm-10">
+      <div class="card shadow-sm" style="min-height: 420px;">
+        <div class="card-body p-4 d-flex flex-column justify-content-center h-100">
+          <div>
+            <h5 class="mb-4">Sign in to continue</h5>
+            <form method="post" action="{% url 'accounts:login' %}">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="id_username" class="form-label small">Username</label>
+                <input id="id_username" name="username" class="form-control" placeholder="Enter your username" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="id_password" class="form-label small">Password</label>
+                <input id="id_password" name="password" type="password" class="form-control" placeholder="Enter your password" required>
+              </div>
+
+              <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-success">Sign In</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

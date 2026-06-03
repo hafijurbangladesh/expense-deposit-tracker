@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Other Deposit - Samprity Abason{% endblock %}
+
+{% block content %}
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% else %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="fas fa-piggy-bank text-success"></i> {{ house.name }} - Add Other Deposit</h1>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="mb-1"><i class="fas fa-piggy-bank text-success"></i> Add Other Deposit</h5>
+                            <p class="mb-0 text-muted">Record any additional deposit for the house, such as miscellaneous collections or one-time payments.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" action="" class="needs-validation">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="deposit">
+                        {% if deposit_form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ deposit_form.non_field_errors }}
+                            </div>
+                        {% endif %}
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                {{ deposit_form.amount.label_tag }}
+                                {{ deposit_form.amount }}
+                                {{ deposit_form.amount.errors }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ deposit_form.flat.label_tag }}
+                                {{ deposit_form.flat }}
+                                {{ deposit_form.flat.errors }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ deposit_form.category.label_tag }}
+                                {{ deposit_form.category }}
+                                {{ deposit_form.category.errors }}
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-3">
+                            <div class="col-md-4">
+                                {{ deposit_form.month.label_tag }}
+                                {{ deposit_form.month }}
+                                {{ deposit_form.month.errors }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ deposit_form.deposit_date.label_tag }}
+                                {{ deposit_form.deposit_date }}
+                                {{ deposit_form.deposit_date.errors }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ deposit_form.receipt.label_tag }}
+                                {{ deposit_form.receipt }}
+                                {{ deposit_form.receipt.errors }}
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            {{ deposit_form.description.label_tag }}
+                            {{ deposit_form.description }}
+                            {{ deposit_form.description.errors }}
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-plus me-2"></i> Save Deposit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <div class="alert alert-info">
+                <h5 class="mb-1"><i class="fas fa-receipt text-warning"></i> Add Expenses</h5>
+                <p class="mb-0">Use the dedicated expense entry page to add one or more expense categories with separate details.</p>
+                <a href="{% url 'dashboard:add_expenses' house.id %}" class="btn btn-sm btn-outline-primary mt-3">
+                    <i class="fas fa-arrow-right"></i> Open Add Expenses Page
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">Recent Deposits</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Month</th>
+                                    <th>Deposit Date</th>
+                                    <th>Receipt</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if deposits %}
+                                    {% for deposit in deposits %}
+                                        <tr>
+                                            <td>{{ deposit.category.name|default:"Deposit" }}</td>
+                                            <td class="text-success"><strong>+₹{{ deposit.amount|floatformat:2 }}</strong></td>
+                                            <td>{{ deposit.month|date:"F Y" }}</td>
+                                            <td>{{ deposit.deposit_date|date:"d M Y" }}</td>
+                                            <td>
+                                                {% if deposit.receipt %}
+                                                    <a href="{{ deposit.receipt.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary">
+                                                        View
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No recent deposits.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

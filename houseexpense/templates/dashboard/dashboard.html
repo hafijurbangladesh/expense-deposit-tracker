@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Samprity Abason{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+    </div>
+</div>
+
+{% if is_manager %}
+    <!-- Manager Dashboard -->
+    <div class="row mb-4">
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card stat-card bg-success">
+                <h6>Total Income</h6>
+                <div class="amount">₹{{ total_deposits|floatformat:2 }}</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card stat-card bg-warning">
+                <h6>Total Expenses</h6>
+                <div class="amount">₹{{ total_expenses|floatformat:2 }}</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card stat-card {% if total_balance >= 0 %}bg-info{% else %}bg-danger{% endif %}">
+                <h6>Overall Balance</h6>
+                <div class="amount">₹{{ total_balance|floatformat:2 }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form method="get" class="d-flex justify-content-end align-items-center gap-2">
+                <label for="summary_month" class="mb-0 text-muted">Select month:</label>
+                <input id="summary_month" type="month" name="summary_month" class="form-control form-control-sm" value="{{ summary_month_value }}">
+                <button type="submit" class="btn btn-sm btn-outline-primary">Change Month</button>
+            </form>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">Month Summary</h5>
+                    <p class="mb-0 text-muted small">Showing data for {{ selected_month|date:'F Y' }}</p>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <h6 class="text-muted">Income</h6>
+                            <h4 class="text-success">₹{{ current_month_deposits|floatformat:2 }}</h4>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <h6 class="text-muted">Expenses</h6>
+                            <h4 class="text-warning">₹{{ current_month_expenses|floatformat:2 }}</h4>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <h6 class="text-muted">Balance</h6>
+                            <h4 class="{% if current_month_balance >= 0 %}text-info{% else %}text-danger{% endif %}">
+                                ₹{{ current_month_balance|floatformat:2 }}
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Monthwise Deposit Summary</h5>
+                        <span class="text-muted small">Showing {{ selected_month|date:'F Y' }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if monthly_deposit_summaries %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th>Flat Number</th>
+                                        <th>Owner</th>
+                                        <th>Deposits</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for summary in monthly_deposit_summaries %}
+                                        <tr>
+                                            <td>{{ summary.month|date:"M Y" }}</td>
+                                            <td>{{ summary.flat_number|default:"-" }}</td>
+                                            <td>{{ summary.owner_name|default:"-" }}</td>
+                                            <td class="text-success">₹{{ summary.total_deposits|floatformat:2 }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No deposit records found for {{ selected_month|date:'F Y' }}.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-white border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Monthwise Expense Summary</h5>
+                        <span class="text-muted small">{{ selected_month|date:'F Y' }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if monthly_expense_summaries %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Expenses</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for summary in monthly_expense_summaries %}
+                                        <tr>
+                                            <td>{{ summary.category__name|default:"Uncategorized" }}</td>
+                                            <td class="text-warning">₹{{ summary.total_expenses|floatformat:2 }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No expense records found for {{ selected_month|date:'F Y' }}.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">Recent Deposits</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_deposits %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for deposit in recent_deposits %}
+                                        <tr>
+                                            <td class="text-success"><strong>+₹{{ deposit.amount|floatformat:2 }}</strong></td>
+                                            <td>{{ deposit.created_at|date:"d M Y" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No recent deposits.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">Recent Expenses</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_expenses %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for expense in recent_expenses %}
+                                        <tr>
+                                            <td class="text-warning"><strong>-₹{{ expense.amount|floatformat:2 }}</strong></td>
+                                            <td>{{ expense.created_at|date:"d M Y" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No recent expenses.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <!-- Flat Owner Dashboard -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card stat-card bg-success">
+                <h6>Total Deposits</h6>
+                <div class="amount">₹{{ total_deposits|floatformat:2 }}</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card stat-card bg-info">
+                <h6>My Flats</h6>
+                <div class="amount">{{ flats.count }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">My Flats</h5>
+                </div>
+                <div class="card-body">
+                    {% if flats %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>House</th>
+                                        <th>Flat Number</th>
+                                        <th>Monthly Charge</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for flat in flats %}
+                                        <tr>
+                                            <td>{{ flat.house.name }}</td>
+                                            <td>{{ flat.flat_number }}</td>
+                                            <td>₹{{ flat.monthly_charge|floatformat:2 }}</td>
+                                            <td>
+                                                {% if flat.is_occupied %}
+                                                    <span class="badge bg-success">Occupied</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Vacant</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No flats assigned.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">Monthwise Deposit Summary</h5>
+                </div>
+                <div class="card-body">
+                    {% if monthly_deposit_summaries %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th>Flat Number</th>
+                                        <th>Owner</th>
+                                        <th>Deposits</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for summary in monthly_deposit_summaries %}
+                                        <tr>
+                                            <td>{{ summary.month|date:"M Y" }}</td>
+                                            <td>{{ summary.flat_number|default:"-" }}</td>
+                                            <td>{{ summary.owner_name|default:"-" }}</td>
+                                            <td class="text-success">₹{{ summary.total_deposits|floatformat:2 }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No monthly deposit summaries available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
