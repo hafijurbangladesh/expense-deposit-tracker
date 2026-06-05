@@ -25,8 +25,11 @@
                         <a href="{% url 'reports:annual_report' house.id %}" class="btn btn-outline-secondary btn-sm w-100 mb-2">
                             <i class="fas fa-calendar"></i> Annual Report
                         </a>
-                        <a href="{% url 'reports:flat_wise_report' house.id %}" class="btn btn-outline-info btn-sm w-100">
+                        <a href="{% url 'reports:flat_wise_report' house.id %}" class="btn btn-outline-info btn-sm w-100 mb-2">
                             <i class="fas fa-door-open"></i> Flat Wise
+                        </a>
+                        <a href="{% url 'reports:month_wise_report' house.id %}" class="btn btn-outline-success btn-sm w-100">
+                            <i class="fas fa-calendar-alt"></i> Month Wise
                         </a>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ from django.db.models import Sum
 from datetime import date, timedelta
 from decimal import Decimal
 import json
+from itertools import groupby
 
 
 class ReportsHomeView(LoginRequiredMixin, TemplateView):
@@ -132,6 +133,86 @@ class FlatWiseReportView(LoginRequiredMixin, TemplateView):
         except House.DoesNotExist:
             context['error'] = 'House not found'
         
+        return context
+
+
+class MonthWiseReportView(LoginRequiredMixin, TemplateView):
+    template_name = 'reports/month_wise_report.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        if not user.is_manager():
+            context['error'] = 'Access denied'
+            return context
+
+        house_id = self.kwargs.get('house_id')
+        try:
+            house = House.objects.get(id=house_id, manager=user)
+            context['house'] = house
+
+            # Year filter
+            today = date.today()
+            selected_year = int(self.request.GET.get('year', today.year))
+
+            all_deposit_months = Deposit.objects.filter(house=house).dates('month', 'year')
+            all_expense_months = Expense.objects.filter(house=house).dates('month', 'year')
+            available_years = sorted(
+                set([d.year for d in all_deposit_months] + [d.year for d in all_expense_months]),
+                reverse=True
+            )
+            if not available_years:
+                available_years = [today.year]
+
+            # Get all months with transactions for selected year
+            deposit_months = set(
+                Deposit.objects.filter(house=house, month__year=selected_year)
+                .values_list('month', flat=True).distinct()
+            )
+            expense_months = set(
+                Expense.objects.filter(house=house, month__year=selected_year)
+                .values_list('month', flat=True).distinct()
+            )
+            all_months = sorted(deposit_months | expense_months, reverse=True)
+
+            # Build month-wise data
+            months_data = []
+            grand_total_deposits = Decimal('0.00')
+            grand_total_expenses = Decimal('0.00')
+
+            for month in all_months:
+                deposits = Deposit.objects.filter(house=house, month=month).select_related('category', 'flat').order_by('category__name')
+                expenses = Expense.objects.filter(house=house, month=month).select_related('category').order_by('category__name')
+
+                total_deposits = deposits.aggregate(t=Sum('amount'))['t'] or Decimal('0.00')
+                total_expenses = expenses.aggregate(t=Sum('amount'))['t'] or Decimal('0.00')
+                balance = total_deposits - total_expenses
+
+                grand_total_deposits += total_deposits
+                grand_total_expenses += total_expenses
+
+                months_data.append({
+                    'month': month,
+                    'deposits': list(deposits),
+                    'expenses': list(expenses),
+                    'total_deposits': total_deposits,
+                    'total_expenses': total_expenses,
+                    'balance': balance,
+                })
+
+            context.update({
+                'months_data': months_data,
+                'selected_year': selected_year,
+                'available_years': available_years,
+                'grand_total_deposits': grand_total_deposits,
+                'grand_total_expenses': grand_total_expenses,
+                'grand_balance': grand_total_deposits - grand_total_expenses,
+            })
+
+        except House.DoesNotExist:
+            context['error'] = 'House not found'
+
         return context
 
 
