@@ -207,30 +207,30 @@
     <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
         <div class="offcanvas-header" style="background-color: var(--primary-color);">
             <h5 class="offcanvas-title text-white" id="mobileSidebarLabel"><i class="fas fa-home"></i> Samprity Abason</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            <button type="button" class="btn-close btn-close-white"></button>
         </div>
         <div class="offcanvas-body p-0">
             <nav class="nav flex-column mt-2">
                 {% if user.is_manager %}
-                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}" data-bs-dismiss="offcanvas">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">
                         <i class="fas fa-chart-line"></i> Dashboard
                     </a>
                     {% if house %}
-                        <a class="nav-link {% if request.resolver_match.url_name == 'collect_service_charge' %}active{% endif %}" href="{% url 'dashboard:collect_service_charge' house.id %}" data-bs-dismiss="offcanvas">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'collect_service_charge' %}active{% endif %}" href="{% url 'dashboard:collect_service_charge' house.id %}">
                             <i class="fas fa-coins"></i> Collect Service Charge
                         </a>
-                        <a class="nav-link {% if request.resolver_match.url_name == 'add_expenses' %}active{% endif %}" href="{% url 'dashboard:add_expenses' house.id %}" data-bs-dismiss="offcanvas">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'add_expenses' %}active{% endif %}" href="{% url 'dashboard:add_expenses' house.id %}">
                             <i class="fas fa-receipt"></i> Add Expenses
                         </a>
-                        <a class="nav-link {% if request.resolver_match.url_name == 'add_deposit' %}active{% endif %}" href="{% url 'dashboard:add_deposit' house.id %}" data-bs-dismiss="offcanvas">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'add_deposit' %}active{% endif %}" href="{% url 'dashboard:add_deposit' house.id %}">
                             <i class="fas fa-piggy-bank"></i> Add Other Deposit
                         </a>
-                        <a class="nav-link {% if request.resolver_match.url_name == 'reports_home' %}active{% endif %}" href="{% url 'reports:reports_home' %}" data-bs-dismiss="offcanvas">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'reports_home' %}active{% endif %}" href="{% url 'reports:reports_home' %}">
                             <i class="fas fa-file-alt"></i> Reports
                         </a>
                     {% endif %}
                 {% else %}
-                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}" data-bs-dismiss="offcanvas">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">
                         <i class="fas fa-tachometer-alt"></i> My Dashboard
                     </a>
                 {% endif %}
