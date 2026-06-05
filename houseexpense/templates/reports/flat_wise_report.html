@@ -67,36 +67,26 @@
                     <thead class="table-light">
                         <tr>
                             <th>Month</th>
-                            <th>Status</th>
-                            <th>Category</th>
-                            <th class="text-end">Amount</th>
-                            <th>Deposit Date</th>
+                            <th class="text-end">Service Charge</th>
+                            <th>Payment Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for row in data.month_rows %}
                         <tr class="{% if not row.paid %}table-danger{% endif %}">
                             <td class="fw-semibold">{{ row.month|date:"F" }}</td>
-                            <td>
-                                {% if row.paid %}
-                                    <span class="badge bg-success"><i class="fas fa-check me-1"></i>Paid</span>
-                                {% else %}
-                                    <span class="badge bg-danger"><i class="fas fa-times me-1"></i>Unpaid</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ row.category }}</td>
                             <td class="text-end">
                                 {% if row.paid %}
-                                    <span class="text-success fw-semibold">৳{{ row.amount|floatformat:2 }}</span>
+                                    <span class="text-success fw-semibold">৳{{ data.flat.monthly_charge|floatformat:2 }}</span>
                                 {% else %}
-                                    <span class="text-muted">-</span>
+                                    <span class="text-danger">৳{{ data.flat.monthly_charge|floatformat:2 }}</span>
                                 {% endif %}
                             </td>
                             <td>
                                 {% if row.deposit_date %}
                                     {{ row.deposit_date|date:"d M Y" }}
                                 {% else %}
-                                    <span class="text-muted">-</span>
+                                    <span class="text-danger fw-semibold">Unpaid</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -104,7 +94,7 @@
                     </tbody>
                     <tfoot class="table-secondary fw-bold">
                         <tr>
-                            <td colspan="3">Total Collected</td>
+                            <td>Total Collected</td>
                             <td class="text-end text-success">৳{{ data.total_collected|floatformat:2 }}</td>
                             <td></td>
                         </tr>
