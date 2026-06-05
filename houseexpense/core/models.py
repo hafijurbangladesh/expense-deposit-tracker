@@ -1,4 +1,4 @@
-from django.db import models
+﻿from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.core.validators import MinValueValidator
@@ -141,7 +141,7 @@ class Expense(models.Model):
         ]
     
     def __str__(self):
-        return f"{self.category.name} - ₹{self.amount} ({self.month.strftime('%B %Y')})"
+        return f"{self.category.name} - ৳{self.amount} ({self.month.strftime('%B %Y')})"
 
 
 # Deposit Category Model
@@ -189,7 +189,7 @@ class Deposit(models.Model):
         ]
     
     def __str__(self):
-        return f"{self.category.name if self.category else 'Deposit'} - ₹{self.amount} ({self.month.strftime('%B %Y')})"
+        return f"{self.category.name if self.category else 'Deposit'} - ৳{self.amount} ({self.month.strftime('%B %Y')})"
 
 
 # Audit Log Model (for tracking changes)

@@ -1,4 +1,4 @@
-// Custom JavaScript for House Expense Manager
+﻿// Custom JavaScript for House Expense Manager
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize tooltips
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     currencyElements.forEach(function(el) {
         const value = parseFloat(el.textContent);
         if (!isNaN(value)) {
-            el.textContent = '₹' + value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            el.textContent = '৳' + value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
     });
     
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Utility function to format currency
 function formatCurrency(value) {
-    return '₹' + parseFloat(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return '৳' + parseFloat(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 // Utility function to format date

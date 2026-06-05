@@ -1,13 +1,13 @@
 from django import forms
 from django.forms import BaseFormSet
-from houseexpense.core.models import Expense, Deposit, ExpenseCategory
+from houseexpense.core.models import Expense, Deposit, ExpenseCategory, DepositCategory
 from datetime import date
 from houseexpense.core.models import Flat
 
 
 class MonthField(forms.DateField):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('widget', forms.DateInput(attrs={'type': 'month', 'class': 'form-control'}))
+        kwargs.setdefault('widget', forms.DateInput(attrs={'type': 'month', 'class': 'form-control'}, format='%Y-%m'))
         kwargs.setdefault('input_formats', ['%Y-%m'])
         super().__init__(*args, **kwargs)
 
@@ -50,9 +50,34 @@ class DepositEntryForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.house = kwargs.pop('house', None)
         super().__init__(*args, **kwargs)
         self.fields['flat'].required = False
         self.fields['flat'].empty_label = 'Select Flat (optional)'
+        self.fields['category'].queryset = DepositCategory.objects.exclude(name='Service Charge')
+        if self.house:
+            self.fields['flat'].queryset = Flat.objects.filter(house=self.house)
+        if not self.instance.pk:
+            self.fields['deposit_date'].initial = date.today()
+            self.fields['month'].initial = date.today().replace(day=1)
+            try:
+                self.fields['category'].initial = DepositCategory.objects.get(name='Monthly Parking Income').pk
+            except DepositCategory.DoesNotExist:
+                pass
+
+    def clean(self):
+        cleaned_data = super().clean()
+        month = cleaned_data.get('month')
+        category = cleaned_data.get('category')
+        if self.house and month and category:
+            qs = Deposit.objects.filter(house=self.house, month=month, category=category)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise forms.ValidationError(
+                    f"A deposit for '{category.name}' in {month.strftime('%B %Y')} already exists."
+                )
+        return cleaned_data
 
 
 class MonthlyServiceChargeForm(forms.Form):
@@ -97,6 +122,10 @@ class MonthlyServiceChargeForm(forms.Form):
 
 class BatchExpenseMonthForm(forms.Form):
     month = MonthField(label='Month', help_text='Select month for all expenses', required=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['month'].widget.attrs['onchange'] = 'this.form.submit()'
 
 
 class ExpenseCategoryEntryForm(forms.Form):
@@ -148,7 +177,7 @@ class ExpenseCategoryEntryForm(forms.Form):
         receipt = cleaned_data.get('receipt')
         description = cleaned_data.get('description')
 
-        has_data = any([amount is not None, bill_date is not None, payment_date is not None, receipt, description])
+        has_data = amount is not None
 
         if selected or has_data:
             cleaned_data['selected'] = True

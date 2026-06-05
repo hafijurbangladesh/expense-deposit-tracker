@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 
 {% block title %}Dashboard - Samprity Abason{% endblock %}
 
@@ -15,19 +15,19 @@
         <div class="col-md-4 col-sm-6 mb-3">
             <div class="card stat-card bg-success">
                 <h6>Total Income</h6>
-                <div class="amount">₹{{ total_deposits|floatformat:2 }}</div>
+                <div class="amount">৳{{ total_deposits|floatformat:2 }}</div>
             </div>
         </div>
         <div class="col-md-4 col-sm-6 mb-3">
             <div class="card stat-card bg-warning">
                 <h6>Total Expenses</h6>
-                <div class="amount">₹{{ total_expenses|floatformat:2 }}</div>
+                <div class="amount">৳{{ total_expenses|floatformat:2 }}</div>
             </div>
         </div>
         <div class="col-md-4 col-sm-6 mb-3">
             <div class="card stat-card {% if total_balance >= 0 %}bg-info{% else %}bg-danger{% endif %}">
                 <h6>Overall Balance</h6>
-                <div class="amount">₹{{ total_balance|floatformat:2 }}</div>
+                <div class="amount">৳{{ total_balance|floatformat:2 }}</div>
             </div>
         </div>
     </div>
@@ -51,16 +51,16 @@
                     <div class="row text-center">
                         <div class="col-md-4 mb-3">
                             <h6 class="text-muted">Income</h6>
-                            <h4 class="text-success">₹{{ current_month_deposits|floatformat:2 }}</h4>
+                            <h4 class="text-success">৳{{ current_month_deposits|floatformat:2 }}</h4>
                         </div>
                         <div class="col-md-4 mb-3">
                             <h6 class="text-muted">Expenses</h6>
-                            <h4 class="text-warning">₹{{ current_month_expenses|floatformat:2 }}</h4>
+                            <h4 class="text-warning">৳{{ current_month_expenses|floatformat:2 }}</h4>
                         </div>
                         <div class="col-md-4 mb-3">
                             <h6 class="text-muted">Balance</h6>
                             <h4 class="{% if current_month_balance >= 0 %}text-info{% else %}text-danger{% endif %}">
-                                ₹{{ current_month_balance|floatformat:2 }}
+                                ৳{{ current_month_balance|floatformat:2 }}
                             </h4>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                                             <td>{{ summary.month|date:"M Y" }}</td>
                                             <td>{{ summary.flat_number|default:"-" }}</td>
                                             <td>{{ summary.owner_name|default:"-" }}</td>
-                                            <td class="text-success">₹{{ summary.total_deposits|floatformat:2 }}</td>
+                                            <td class="text-success">৳{{ summary.total_deposits|floatformat:2 }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -133,7 +133,7 @@
                                     {% for summary in monthly_expense_summaries %}
                                         <tr>
                                             <td>{{ summary.category__name|default:"Uncategorized" }}</td>
-                                            <td class="text-warning">₹{{ summary.total_expenses|floatformat:2 }}</td>
+                                            <td class="text-warning">৳{{ summary.total_expenses|floatformat:2 }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -166,7 +166,7 @@
                                 <tbody>
                                     {% for deposit in recent_deposits %}
                                         <tr>
-                                            <td class="text-success"><strong>+₹{{ deposit.amount|floatformat:2 }}</strong></td>
+                                            <td class="text-success"><strong>+৳{{ deposit.amount|floatformat:2 }}</strong></td>
                                             <td>{{ deposit.created_at|date:"d M Y" }}</td>
                                         </tr>
                                     {% endfor %}
@@ -198,7 +198,7 @@
                                 <tbody>
                                     {% for expense in recent_expenses %}
                                         <tr>
-                                            <td class="text-warning"><strong>-₹{{ expense.amount|floatformat:2 }}</strong></td>
+                                            <td class="text-warning"><strong>-৳{{ expense.amount|floatformat:2 }}</strong></td>
                                             <td>{{ expense.created_at|date:"d M Y" }}</td>
                                         </tr>
                                     {% endfor %}
@@ -218,7 +218,7 @@
         <div class="col-md-6">
             <div class="card stat-card bg-success">
                 <h6>Total Deposits</h6>
-                <div class="amount">₹{{ total_deposits|floatformat:2 }}</div>
+                <div class="amount">৳{{ total_deposits|floatformat:2 }}</div>
             </div>
         </div>
         <div class="col-md-6">
@@ -252,7 +252,7 @@
                                         <tr>
                                             <td>{{ flat.house.name }}</td>
                                             <td>{{ flat.flat_number }}</td>
-                                            <td>₹{{ flat.monthly_charge|floatformat:2 }}</td>
+                                            <td>৳{{ flat.monthly_charge|floatformat:2 }}</td>
                                             <td>
                                                 {% if flat.is_occupied %}
                                                     <span class="badge bg-success">Occupied</span>
@@ -297,7 +297,7 @@
                                             <td>{{ summary.month|date:"M Y" }}</td>
                                             <td>{{ summary.flat_number|default:"-" }}</td>
                                             <td>{{ summary.owner_name|default:"-" }}</td>
-                                            <td class="text-success">₹{{ summary.total_deposits|floatformat:2 }}</td>
+                                            <td class="text-success">৳{{ summary.total_deposits|floatformat:2 }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

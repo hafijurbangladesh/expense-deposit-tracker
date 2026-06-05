@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 
 {% block title %}Annual Report - House Expense Manager{% endblock %}
 
@@ -16,19 +16,19 @@
         <div class="col-md-4">
             <div class="card stat-card bg-success">
                 <h6>Total Income (Last 12 Months)</h6>
-                <div class="amount">₹{{ total_deposits|floatformat:2 }}</div>
+                <div class="amount">৳{{ total_deposits|floatformat:2 }}</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card stat-card bg-warning">
                 <h6>Total Expenses (Last 12 Months)</h6>
-                <div class="amount">₹{{ total_expenses|floatformat:2 }}</div>
+                <div class="amount">৳{{ total_expenses|floatformat:2 }}</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card stat-card {% if total_balance >= 0 %}bg-info{% else %}bg-danger{% endif %}">
                 <h6>Annual Balance</h6>
-                <div class="amount">₹{{ total_balance|floatformat:2 }}</div>
+                <div class="amount">৳{{ total_balance|floatformat:2 }}</div>
             </div>
         </div>
     </div>
@@ -63,10 +63,10 @@
                         {% for summary in monthly_summaries %}
                             <tr>
                                 <td><strong>{{ summary.month|date:"M Y" }}</strong></td>
-                                <td class="text-success">₹{{ summary.total_deposits|floatformat:2 }}</td>
-                                <td class="text-warning">₹{{ summary.total_expenses|floatformat:2 }}</td>
+                                <td class="text-success">৳{{ summary.total_deposits|floatformat:2 }}</td>
+                                <td class="text-warning">৳{{ summary.total_expenses|floatformat:2 }}</td>
                                 <td class="{% if summary.balance >= 0 %}text-info{% else %}text-danger{% endif %}">
-                                    ₹{{ summary.balance|floatformat:2 }}
+                                    ৳{{ summary.balance|floatformat:2 }}
                                 </td>
                             </tr>
                         {% endfor %}

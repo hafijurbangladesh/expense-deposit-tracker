@@ -14,27 +14,36 @@
 
     <div class="row mb-4">
         <div class="col-md-8 mx-auto">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm" id="depositFormCard">
                 <div class="card-header bg-white border-bottom">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h5 class="mb-1"><i class="fas fa-piggy-bank text-success"></i> Add Other Deposit</h5>
+                            <h5 class="mb-1" id="formCardTitle"><i class="fas fa-piggy-bank text-success"></i> Add Other Deposit</h5>
                             <p class="mb-0 text-muted">Record any additional deposit for the house, such as miscellaneous collections or one-time payments.</p>
                         </div>
+                        <button type="button" id="cancelEditBtn" class="btn btn-sm btn-outline-secondary d-none" onclick="resetToAddMode()">
+                            <i class="fas fa-times me-1"></i> Cancel Edit
+                        </button>
                     </div>
                 </div>
                 <div class="card-body">
-                    <form method="post" enctype="multipart/form-data" action="" class="needs-validation">
+                    <form method="post" enctype="multipart/form-data" action="" id="depositForm">
                         {% csrf_token %}
-                        <input type="hidden" name="form_type" value="deposit">
+                        <input type="hidden" name="form_type" id="formType" value="deposit">
+                        <input type="hidden" name="deposit_id" id="depositId" value="">
                         {% if deposit_form.non_field_errors %}
                             <div class="alert alert-danger">
                                 {{ deposit_form.non_field_errors }}
                             </div>
                         {% endif %}
+                        {% if edit_form and edit_form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ edit_form.non_field_errors }}
+                            </div>
+                        {% endif %}
                         <div class="row g-3">
                             <div class="col-md-4">
-                                {{ deposit_form.amount.label_tag }}
+                                <label class="form-label" for="{{ deposit_form.amount.id_for_label }}">{{ deposit_form.amount.label }} <span class="text-danger">*</span></label>
                                 {{ deposit_form.amount }}
                                 {{ deposit_form.amount.errors }}
                             </div>
@@ -44,19 +53,19 @@
                                 {{ deposit_form.flat.errors }}
                             </div>
                             <div class="col-md-4">
-                                {{ deposit_form.category.label_tag }}
+                                <label class="form-label" for="{{ deposit_form.category.id_for_label }}">{{ deposit_form.category.label }} <span class="text-danger">*</span></label>
                                 {{ deposit_form.category }}
                                 {{ deposit_form.category.errors }}
                             </div>
                         </div>
                         <div class="row g-3 mt-3">
                             <div class="col-md-4">
-                                {{ deposit_form.month.label_tag }}
+                                <label class="form-label" for="{{ deposit_form.month.id_for_label }}">{{ deposit_form.month.label }} <span class="text-danger">*</span></label>
                                 {{ deposit_form.month }}
                                 {{ deposit_form.month.errors }}
                             </div>
                             <div class="col-md-4">
-                                {{ deposit_form.deposit_date.label_tag }}
+                                <label class="form-label" for="{{ deposit_form.deposit_date.id_for_label }}">{{ deposit_form.deposit_date.label }} <span class="text-danger">*</span></label>
                                 {{ deposit_form.deposit_date }}
                                 {{ deposit_form.deposit_date.errors }}
                             </div>
@@ -72,22 +81,12 @@
                             {{ deposit_form.description.errors }}
                         </div>
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                <i class="fas fa-plus me-2"></i> Save Deposit
+                            <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                <i class="fas fa-plus me-2"></i> <span id="submitBtnText">Save Deposit</span>
                             </button>
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-12 mb-3">
-            <div class="alert alert-info">
-                <h5 class="mb-1"><i class="fas fa-receipt text-warning"></i> Add Expenses</h5>
-                <p class="mb-0">Use the dedicated expense entry page to add one or more expense categories with separate details.</p>
-                <a href="{% url 'dashboard:add_expenses' house.id %}" class="btn btn-sm btn-outline-primary mt-3">
-                    <i class="fas fa-arrow-right"></i> Open Add Expenses Page
-                </a>
             </div>
         </div>
     </div>
@@ -96,9 +95,12 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-light border-bottom">
-                    <h5 class="mb-0">Recent Deposits</h5>
+                    <h5 class="mb-0">Deposit History</h5>
                 </div>
                 <div class="card-body">
+                    {% if error_msg %}
+                        <div class="alert alert-danger">{{ error_msg }}</div>
+                    {% endif %}
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
@@ -108,14 +110,21 @@
                                     <th>Month</th>
                                     <th>Deposit Date</th>
                                     <th>Receipt</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% if deposits %}
                                     {% for deposit in deposits %}
                                         <tr>
-                                            <td>{{ deposit.category.name|default:"Deposit" }}</td>
-                                            <td class="text-success"><strong>+₹{{ deposit.amount|floatformat:2 }}</strong></td>
+                                            <td>
+                                                {% if deposit.category.name == "Service Charge" %}
+                                                    Service Charge - {{ deposit.month|date:"M Y" }}{% if deposit.flat %} - Flat {{ deposit.flat.flat_number }}{% endif %}
+                                                {% else %}
+                                                    {{ deposit.category.name|default:"Deposit" }}
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-success"><strong>+৳{{ deposit.amount|floatformat:2 }}</strong></td>
                                             <td>{{ deposit.month|date:"F Y" }}</td>
                                             <td>{{ deposit.deposit_date|date:"d M Y" }}</td>
                                             <td>
@@ -125,19 +134,161 @@
                                                     </a>
                                                 {% endif %}
                                             </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-outline-primary edit-deposit-btn"
+                                                    data-id="{{ deposit.id }}"
+                                                    data-amount="{{ deposit.amount }}"
+                                                    data-flat="{{ deposit.flat.id|default:'' }}"
+                                                    data-category="{{ deposit.category.id|default:'' }}"
+                                                    data-month="{{ deposit.month|date:'Y-m' }}"
+                                                    data-deposit-date="{{ deposit.deposit_date|date:'Y-m-d' }}"
+                                                    data-description="{{ deposit.description }}">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </button>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 {% else %}
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">No recent deposits.</td>
+                                        <td colspan="6" class="text-center text-muted">No deposits found.</td>
                                     </tr>
                                 {% endif %}
                             </tbody>
                         </table>
                     </div>
+
+                    {% if deposits.has_other_pages %}
+                    <nav class="mt-3">
+                        <ul class="pagination pagination-sm justify-content-end mb-0">
+                            {% if deposits.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ deposits.previous_page_number }}">&laquo;</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                            {% endif %}
+                            {% for num in deposits.paginator.page_range %}
+                                <li class="page-item {% if deposits.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endfor %}
+                            {% if deposits.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ deposits.next_page_number }}">&raquo;</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const usedCombinations = {{ used_combinations|default:"{}"|safe }};
+    const monthInput    = document.getElementById('{{ deposit_form.month.id_for_label }}');
+    const categorySelect = document.getElementById('{{ deposit_form.category.id_for_label }}');
+    const flatSelect    = document.getElementById('{{ deposit_form.flat.id_for_label }}');
+    const amountInput   = document.getElementById('{{ deposit_form.amount.id_for_label }}');
+    const depositDateInput = document.getElementById('{{ deposit_form.deposit_date.id_for_label }}');
+    const descriptionInput = document.getElementById('{{ deposit_form.description.id_for_label }}');
+
+    // Track the category of the record currently being edited so we don't disable it
+    let editingCategoryId = null;
+
+    function updateCategoryOptions(currentMonth) {
+        const month = currentMonth || (monthInput ? monthInput.value : '');
+        const usedIds = (usedCombinations[month] || []).map(String);
+        Array.from(categorySelect.options).forEach(function (opt) {
+            if (!opt.value) return;
+            const isCurrentEditCat = opt.value === String(editingCategoryId);
+            if (usedIds.includes(opt.value) && !isCurrentEditCat) {
+                opt.disabled = true;
+                opt.title = 'Already recorded for this month';
+            } else {
+                opt.disabled = false;
+                opt.title = '';
+            }
+        });
+    }
+
+    if (monthInput) {
+        monthInput.addEventListener('change', function () { updateCategoryOptions(); });
+        updateCategoryOptions();
+    }
+
+    // Populate top form from Edit button data
+    document.querySelectorAll('.edit-deposit-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            editingCategoryId = btn.dataset.category;
+
+            document.getElementById('formType').value = 'edit_deposit';
+            document.getElementById('depositId').value = btn.dataset.id;
+
+            amountInput.value = btn.dataset.amount;
+            monthInput.value  = btn.dataset.month;
+            depositDateInput.value = btn.dataset.depositDate;
+            descriptionInput.value = btn.dataset.description;
+
+            Array.from(flatSelect.options).forEach(function (o) {
+                o.selected = o.value === btn.dataset.flat;
+            });
+
+            updateCategoryOptions(btn.dataset.month);
+
+            Array.from(categorySelect.options).forEach(function (o) {
+                o.selected = o.value === btn.dataset.category;
+            });
+
+            // Switch UI to edit mode
+            document.getElementById('formCardTitle').innerHTML =
+                '<i class="fas fa-edit text-primary"></i> Edit Deposit';
+            document.getElementById('submitBtnText').textContent = 'Update Deposit';
+            document.getElementById('submitBtn').className = 'btn btn-primary btn-lg';
+            document.getElementById('cancelEditBtn').classList.remove('d-none');
+
+            document.getElementById('depositFormCard').scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Reset form back to Add mode
+    window.resetToAddMode = function () {
+        editingCategoryId = null;
+        document.getElementById('formType').value = 'deposit';
+        document.getElementById('depositId').value = '';
+        document.getElementById('depositForm').reset();
+        updateCategoryOptions();
+        document.getElementById('formCardTitle').innerHTML =
+            '<i class="fas fa-piggy-bank text-success"></i> Add Other Deposit';
+        document.getElementById('submitBtnText').textContent = 'Save Deposit';
+        document.getElementById('submitBtn').className = 'btn btn-success btn-lg';
+        document.getElementById('cancelEditBtn').classList.add('d-none');
+    };
+
+    // If server returned edit errors, restore edit mode state
+    {% if edit_deposit_id %}
+    (function () {
+        var btn = document.querySelector('.edit-deposit-btn[data-id="{{ edit_deposit_id }}"]');
+        if (btn) {
+            editingCategoryId = btn.dataset.category;
+            document.getElementById('formType').value = 'edit_deposit';
+            document.getElementById('depositId').value = btn.dataset.id;
+            document.getElementById('formCardTitle').innerHTML =
+                '<i class="fas fa-edit text-primary"></i> Edit Deposit';
+            document.getElementById('submitBtnText').textContent = 'Update Deposit';
+            document.getElementById('submitBtn').className = 'btn btn-primary btn-lg';
+            document.getElementById('cancelEditBtn').classList.remove('d-none');
+            updateCategoryOptions(btn.dataset.month);
+        }
+    })();
+    {% endif %}
+})();
+</script>
 {% endblock %}

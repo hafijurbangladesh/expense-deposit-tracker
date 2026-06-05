@@ -1,6 +1,7 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
+from django.core.paginator import Paginator
 from django.forms import formset_factory
 from houseexpense.core.models import House, Expense, Deposit, MonthlySummary, Flat, ExpenseCategory
 from houseexpense.core.models import DepositCategory
@@ -18,6 +19,7 @@ from datetime import timedelta, date
 from django.db.models import Sum, F, Value, CharField
 from django.db.models.functions import Coalesce, Concat
 from decimal import Decimal
+import json
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -302,9 +304,18 @@ class HouseExpenseDepositView(LoginRequiredMixin, TemplateView):
             context['house'] = house
             
             context['expenses'] = Expense.objects.filter(house=house).order_by('-created_at')[:10]
-            context['deposits'] = Deposit.objects.filter(house=house).order_by('-created_at')[:10]
+            all_deposits = Deposit.objects.filter(house=house).order_by('-month', '-deposit_date')
+            paginator = Paginator(all_deposits, 10)
+            page_number = self.request.GET.get('page', 1)
+            context['deposits'] = paginator.get_page(page_number)
             context['flats'] = house.flats.all()
-            context['deposit_form'] = DepositEntryForm(initial={'month': date.today().replace(day=1)})
+            context['deposit_form'] = DepositEntryForm(house=house)
+            used = Deposit.objects.filter(house=house).values('month', 'category_id')
+            used_map = {}
+            for item in used:
+                key = item['month'].strftime('%Y-%m')
+                used_map.setdefault(key, []).append(item['category_id'])
+            context['used_combinations'] = json.dumps(used_map)
             
         except House.DoesNotExist:
             context['error'] = 'House not found'
@@ -323,7 +334,7 @@ class HouseExpenseDepositView(LoginRequiredMixin, TemplateView):
             return self.render_to_response({'error': 'House not found'})
 
         if request.POST.get('form_type') == 'deposit':
-            form = DepositEntryForm(request.POST, request.FILES)
+            form = DepositEntryForm(request.POST, request.FILES, house=house)
             if form.is_valid():
                 deposit = form.save(commit=False)
                 deposit.house = house
@@ -332,6 +343,23 @@ class HouseExpenseDepositView(LoginRequiredMixin, TemplateView):
                 return redirect('dashboard:add_deposit', house_id=house.id)
             context = self.get_context_data(**kwargs)
             context['deposit_form'] = form
+            return self.render_to_response(context)
+
+        if request.POST.get('form_type') == 'edit_deposit':
+            deposit_id = request.POST.get('deposit_id')
+            try:
+                deposit = Deposit.objects.get(id=deposit_id, house=house)
+            except Deposit.DoesNotExist:
+                context = self.get_context_data(**kwargs)
+                context['error_msg'] = 'Deposit not found.'
+                return self.render_to_response(context)
+            form = DepositEntryForm(request.POST, request.FILES, instance=deposit, house=house)
+            if form.is_valid():
+                form.save()
+                return redirect('dashboard:add_deposit', house_id=house.id)
+            context = self.get_context_data(**kwargs)
+            context['edit_form'] = form
+            context['edit_deposit_id'] = int(deposit_id)
             return self.render_to_response(context)
 
         return self.render_to_response(self.get_context_data(**kwargs))
@@ -380,7 +408,7 @@ class AddExpensesView(LoginRequiredMixin, TemplateView):
             extra=0,
             can_delete=False
         )
-        initial = [{'category_id': category.id} for category in categories]
+        initial = [{'category_id': category.id, 'bill_date': today, 'payment_date': today} for category in categories]
         formset = ExpenseFormSet(
             initial=initial,
             categories=list(categories),
@@ -404,24 +432,24 @@ class AddExpensesView(LoginRequiredMixin, TemplateView):
 
         month_form = BatchExpenseMonthForm(self.request.GET or self.request.POST or None, initial={'month': selected_month})
 
-        recent_expenses = Expense.objects.filter(house=house).order_by('-month', '-payment_date')[:30]
-        recent_expenses_by_month = []
-        current_group = None
-        for expense in recent_expenses:
-            if current_group is None or expense.month != current_group['month']:
-                current_group = {
-                    'month': expense.month,
-                    'expenses': []
-                }
-                recent_expenses_by_month.append(current_group)
-            current_group['expenses'].append(expense)
+        all_expenses = Expense.objects.filter(house=house).order_by('-month', '-payment_date').select_related('category')
+        grouped = {}
+        for expense in all_expenses:
+            key = expense.month
+            grouped.setdefault(key, []).append(expense)
+        grouped_list = [{'month': m, 'expenses': grouped[m]} for m in sorted(grouped.keys(), reverse=True)]
+        paginator = Paginator(grouped_list, 1)
+        page_number = self.request.GET.get('page', 1)
+        expense_history = paginator.get_page(page_number)
 
         context.update({
             'house': house,
             'selected_month': selected_month,
             'month_form': month_form,
             'expense_formset': formset,
-            'recent_expenses_by_month': recent_expenses_by_month,
+            'expense_history': expense_history,
+            'expense_months': [g['month'] for g in grouped_list],
+            'expense_categories': ExpenseCategory.objects.all(),
         })
         return context
 
@@ -450,6 +478,24 @@ class AddExpensesView(LoginRequiredMixin, TemplateView):
             categories=list(categories),
             prefix='expenses'
         )
+
+        if request.POST.get('form_type') == 'edit_expense':
+            expense_id = request.POST.get('expense_id')
+            try:
+                expense = Expense.objects.get(id=expense_id, house=house)
+            except Expense.DoesNotExist:
+                context = self.get_context_data(**kwargs)
+                context['edit_expense_error'] = 'Expense not found.'
+                return self.render_to_response(context)
+            edit_form = ExpenseEntryForm(request.POST, request.FILES, instance=expense)
+            if edit_form.is_valid():
+                edit_form.save()
+                redirect_url = f"{request.path}?month={expense.month.strftime('%Y-%m')}"
+                return redirect(redirect_url)
+            context = self.get_context_data(**kwargs)
+            context['edit_expense_form'] = edit_form
+            context['edit_expense_id'] = int(expense_id)
+            return self.render_to_response(context)
 
         if month_form.is_valid() and expense_formset.is_valid():
             month = month_form.cleaned_data['month']

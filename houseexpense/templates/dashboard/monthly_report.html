@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 
 {% block title %}Monthly Report - House Expense Manager{% endblock %}
 
@@ -18,19 +18,19 @@
             <div class="col-md-4">
                 <div class="card stat-card bg-success">
                     <h6>Total Income</h6>
-                    <div class="amount">₹{{ summary.total_deposits|floatformat:2 }}</div>
+                    <div class="amount">৳{{ summary.total_deposits|floatformat:2 }}</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card stat-card bg-warning">
                     <h6>Total Expenses</h6>
-                    <div class="amount">₹{{ summary.total_expenses|floatformat:2 }}</div>
+                    <div class="amount">৳{{ summary.total_expenses|floatformat:2 }}</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card stat-card {% if summary.balance >= 0 %}bg-info{% else %}bg-danger{% endif %}">
                     <h6>Balance</h6>
-                    <div class="amount">₹{{ summary.balance|floatformat:2 }}</div>
+                    <div class="amount">৳{{ summary.balance|floatformat:2 }}</div>
                 </div>
             </div>
         </div>
@@ -56,9 +56,15 @@
                                 <tbody>
                                     {% for deposit in deposits %}
                                         <tr>
-                                            <td>{{ deposit.category.name|default:"Deposit" }}</td>
+                                            <td>
+                                                {% if deposit.category.name == "Service Charge" %}
+                                                    Service Charge - {{ deposit.month|date:"M Y" }}{% if deposit.flat %} - Flat {{ deposit.flat.flat_number }}{% endif %}
+                                                {% else %}
+                                                    {{ deposit.category.name|default:"Deposit" }}
+                                                {% endif %}
+                                            </td>
                                             <td>{{ deposit.flat.flat_number|default:"-" }}</td>
-                                            <td class="text-success"><strong>₹{{ deposit.amount|floatformat:2 }}</strong></td>
+                                            <td class="text-success"><strong>৳{{ deposit.amount|floatformat:2 }}</strong></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -92,7 +98,7 @@
                                         <tr>
                                             <td>{{ expense.category.name }}</td>
                                             <td>{{ expense.description|truncatewords:3 }}</td>
-                                            <td class="text-warning"><strong>₹{{ expense.amount|floatformat:2 }}</strong></td>
+                                            <td class="text-warning"><strong>৳{{ expense.amount|floatformat:2 }}</strong></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

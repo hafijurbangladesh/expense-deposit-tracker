@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 
 {% block title %}Flat Wise Report - House Expense Manager{% endblock %}
 
@@ -33,8 +33,8 @@
                             <tr>
                                 <td><strong>{{ data.flat.flat_number }}</strong></td>
                                 <td>{{ data.flat.owner.get_full_name|default:"Not Assigned" }}</td>
-                                <td>₹{{ data.flat.monthly_charge|floatformat:2 }}</td>
-                                <td class="text-success"><strong>₹{{ data.total_deposits|floatformat:2 }}</strong></td>
+                                <td>৳{{ data.flat.monthly_charge|floatformat:2 }}</td>
+                                <td class="text-success"><strong>৳{{ data.total_deposits|floatformat:2 }}</strong></td>
                                 <td>
                                     {% if data.flat.is_occupied %}
                                         <span class="badge bg-success">Occupied</span>
