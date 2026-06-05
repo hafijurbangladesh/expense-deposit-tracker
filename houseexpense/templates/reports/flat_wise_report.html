@@ -1,53 +1,122 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 
-{% block title %}Flat Wise Report - House Expense Manager{% endblock %}
+{% block title %}Flat Wise Report - {{ house.name }}{% endblock %}
 
 {% block content %}
 {% if error %}
     <div class="alert alert-danger">{{ error }}</div>
 {% else %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1><i class="fas fa-door-open"></i> {{ house.name }} - Flat Wise Report</h1>
-        </div>
-    </div>
 
-    <div class="card">
-        <div class="card-header bg-light border-bottom">
-            <h5 class="mb-0">Deposits by Flat</h5>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h1 class="mb-0"><i class="fas fa-door-open text-info"></i> Flat Wise Report</h1>
+    <div class="d-flex align-items-center gap-2">
+        <form method="get" class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 fw-semibold">Year:</label>
+            <select name="year" class="form-select form-select-sm" onchange="this.form.submit()" style="width:auto;">
+                {% for yr in available_years %}
+                    <option value="{{ yr }}" {% if yr == selected_year %}selected{% endif %}>{{ yr }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <a href="{% url 'reports:reports_home' %}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+{% if flat_data %}
+    {% for data in flat_data %}
+    <div class="card mb-4 shadow-sm">
+        <!-- Flat Header -->
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2"
+             style="background-color:#2c3e50; color:white;">
+            <div>
+                <h5 class="mb-0">
+                    <i class="fas fa-door-open me-2"></i> Flat {{ data.flat.flat_number }}
+                    {% if data.flat.is_occupied %}
+                        <span class="badge bg-success ms-2">Occupied</span>
+                    {% else %}
+                        <span class="badge bg-danger ms-2">Vacant</span>
+                    {% endif %}
+                </h5>
+                <small class="opacity-75">
+                    Owner: {{ data.flat.owner.get_full_name|default:"Not Assigned" }}
+                    &nbsp;|&nbsp; Monthly Charge: ৳{{ data.flat.monthly_charge|floatformat:2 }}
+                </small>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <span class="badge bg-success">Collected: ৳{{ data.total_collected|floatformat:2 }}</span>
+                <span class="badge bg-secondary">Expected: ৳{{ data.expected_total|floatformat:2 }}</span>
+                <span class="badge {% if data.collection_rate == 100 %}bg-primary{% elif data.collection_rate >= 50 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                    {{ data.collection_rate }}% paid
+                </span>
+            </div>
         </div>
-        <div class="card-body">
+
+        <div class="card-body p-0">
+            <!-- Summary row -->
+            <div class="d-flex gap-4 px-3 py-2 bg-light border-bottom flex-wrap">
+                <span class="small"><i class="fas fa-check-circle text-success me-1"></i> Months Paid: <strong>{{ data.months_paid }}</strong></span>
+                <span class="small"><i class="fas fa-times-circle text-danger me-1"></i> Months Unpaid: <strong>{{ data.months_unpaid }}</strong></span>
+                <span class="small"><i class="fas fa-calendar me-1"></i> Year: <strong>{{ selected_year }}</strong></span>
+            </div>
+
+            <!-- Month-wise table -->
             <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
+                <table class="table table-sm table-hover mb-0">
+                    <thead class="table-light">
                         <tr>
-                            <th>Flat Number</th>
-                            <th>Owner</th>
-                            <th>Monthly Charge</th>
-                            <th>Total Deposits</th>
+                            <th>Month</th>
                             <th>Status</th>
+                            <th>Category</th>
+                            <th class="text-end">Amount</th>
+                            <th>Deposit Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for data in flat_data %}
-                            <tr>
-                                <td><strong>{{ data.flat.flat_number }}</strong></td>
-                                <td>{{ data.flat.owner.get_full_name|default:"Not Assigned" }}</td>
-                                <td>৳{{ data.flat.monthly_charge|floatformat:2 }}</td>
-                                <td class="text-success"><strong>৳{{ data.total_deposits|floatformat:2 }}</strong></td>
-                                <td>
-                                    {% if data.flat.is_occupied %}
-                                        <span class="badge bg-success">Occupied</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">Vacant</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
+                        {% for row in data.month_rows %}
+                        <tr class="{% if not row.paid %}table-danger{% endif %}">
+                            <td class="fw-semibold">{{ row.month|date:"F" }}</td>
+                            <td>
+                                {% if row.paid %}
+                                    <span class="badge bg-success"><i class="fas fa-check me-1"></i>Paid</span>
+                                {% else %}
+                                    <span class="badge bg-danger"><i class="fas fa-times me-1"></i>Unpaid</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ row.category }}</td>
+                            <td class="text-end">
+                                {% if row.paid %}
+                                    <span class="text-success fw-semibold">৳{{ row.amount|floatformat:2 }}</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.deposit_date %}
+                                    {{ row.deposit_date|date:"d M Y" }}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
+                    <tfoot class="table-secondary fw-bold">
+                        <tr>
+                            <td colspan="3">Total Collected</td>
+                            <td class="text-end text-success">৳{{ data.total_collected|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
     </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info">No flats found for this house.</div>
+{% endif %}
+
 {% endif %}
 {% endblock %}

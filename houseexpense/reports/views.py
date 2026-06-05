@@ -98,41 +98,75 @@ class AnnualReportView(LoginRequiredMixin, TemplateView):
 
 class FlatWiseReportView(LoginRequiredMixin, TemplateView):
     template_name = 'reports/flat_wise_report.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        
+
         if not user.is_manager():
-            return {'error': 'Access denied'}
-        
+            context['error'] = 'Access denied'
+            return context
+
         house_id = self.kwargs.get('house_id')
         try:
             house = House.objects.get(id=house_id, manager=user)
             context['house'] = house
-            
-            # Get deposits by flat
-            flats_deposits = Deposit.objects.filter(house=house).values(
-                'flat__flat_number'
-            ).annotate(total=Sum('amount')).order_by('-total')
-            
-            context['flats_deposits'] = flats_deposits
-            
-            # Get all flats with their charges
-            flats = house.flats.all()
+
+            today = date.today()
+            selected_year = int(self.request.GET.get('year', today.year))
+
+            deposit_years = Deposit.objects.filter(house=house).dates('month', 'year')
+            available_years = sorted(set(d.year for d in deposit_years), reverse=True)
+            if today.year not in available_years:
+                available_years = [today.year] + list(available_years)
+
+            all_months = [date(selected_year, m, 1) for m in range(1, 13)]
+
+            flats = house.flats.order_by('flat_number')
             flat_data = []
+
             for flat in flats:
-                deposits = Deposit.objects.filter(flat=flat).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+                deposits_qs = Deposit.objects.filter(
+                    flat=flat, month__year=selected_year
+                ).select_related('category').order_by('month')
+
+                deposits_by_month = {d.month: d for d in deposits_qs}
+
+                month_rows = []
+                for month in all_months:
+                    deposit = deposits_by_month.get(month)
+                    month_rows.append({
+                        'month': month,
+                        'deposit': deposit,
+                        'paid': deposit is not None,
+                        'amount': deposit.amount if deposit else None,
+                        'deposit_date': deposit.deposit_date if deposit else None,
+                        'category': deposit.category.name if deposit and deposit.category else '-',
+                    })
+
+                total_collected = deposits_qs.aggregate(t=Sum('amount'))['t'] or Decimal('0.00')
+                months_paid = sum(1 for r in month_rows if r['paid'])
+                expected_total = flat.monthly_charge * 12
+
                 flat_data.append({
                     'flat': flat,
-                    'total_deposits': deposits,
+                    'month_rows': month_rows,
+                    'total_collected': total_collected,
+                    'months_paid': months_paid,
+                    'months_unpaid': 12 - months_paid,
+                    'expected_total': expected_total,
+                    'collection_rate': round((months_paid / 12) * 100),
                 })
-            
-            context['flat_data'] = flat_data
-            
+
+            context.update({
+                'flat_data': flat_data,
+                'selected_year': selected_year,
+                'available_years': available_years,
+            })
+
         except House.DoesNotExist:
             context['error'] = 'House not found'
-        
+
         return context
 
 
