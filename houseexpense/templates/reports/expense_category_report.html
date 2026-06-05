@@ -49,39 +49,35 @@
         </div>
     </div>
 {% endif %}
+{% endblock %}
 
 {% block extra_js %}
-    <script>
-        {% if top_categories %}
-            const categoryData = {
-                labels: [{% for item in top_categories %}'{{ item.category__name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
-                amounts: [{% for item in top_categories %}{{ item.total }}{% if not forloop.last %},{% endif %}{% endfor %}]
-            };
-            
-            const ctx = document.getElementById('categoryChart').getContext('2d');
-            const chart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: categoryData.labels,
-                    datasets: [{
-                        data: categoryData.amounts,
-                        backgroundColor: [
-                            '#3498db', '#e74c3c', '#2ecc71', '#f39c12',
-                            '#9b59b6', '#1abc9c', '#34495e', '#e67e22'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        {% endif %}
-    </script>
-{% endblock %}
+<script>
+    {% if top_categories %}
+        const categoryData = {
+            labels: [{% for item in top_categories %}'{{ item.category__name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            amounts: [{% for item in top_categories %}{{ item.total }}{% if not forloop.last %},{% endif %}{% endfor %}]
+        };
+
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: categoryData.labels,
+                datasets: [{
+                    data: categoryData.amounts,
+                    backgroundColor: [
+                        '#3498db', '#e74c3c', '#2ecc71', '#f39c12',
+                        '#9b59b6', '#1abc9c', '#34495e', '#e67e22'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    {% endif %}
+</script>
 {% endblock %}
