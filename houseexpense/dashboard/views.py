@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.forms import formset_factory
-from houseexpense.core.models import House, Expense, Deposit, MonthlySummary, Flat, ExpenseCategory
+from houseexpense.core.models import House, Expense, Deposit, MonthlySummary, ExpenseCategory
 from houseexpense.core.models import DepositCategory
 from houseexpense.dashboard.forms import (
     ExpenseEntryForm,
@@ -14,10 +14,8 @@ from houseexpense.dashboard.forms import (
     ExpenseCategoryEntryForm,
     BaseExpenseCategoryFormSet,
 )
-from django.utils import timezone
-from datetime import timedelta, date
-from django.db.models import Sum, F, Value, CharField
-from django.db.models.functions import Coalesce, Concat
+from datetime import date
+from django.db.models import Sum
 from decimal import Decimal
 import json
 
@@ -28,141 +26,138 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        
+        context['is_manager'] = user.is_manager()
+
+        # Resolve house for both managers and flat owners
         if user.is_manager():
-            # Manager dashboard for a single house
             house = House.objects.filter(manager=user).first()
-            context['house'] = house
-            context['is_manager'] = True
-            
-            if house:
-                total_expenses = Expense.objects.filter(house=house).aggregate(
-                    total=Sum('amount')
-                )['total'] or Decimal('0.00')
-                total_deposits = Deposit.objects.filter(house=house).aggregate(
-                    total=Sum('amount')
-                )['total'] or Decimal('0.00')
-            else:
-                total_expenses = Decimal('0.00')
-                total_deposits = Decimal('0.00')
-            
-            context['total_expenses'] = total_expenses
-            context['total_deposits'] = total_deposits
-            context['total_balance'] = total_deposits - total_expenses
-            
-            # Month summary statistics
-            today = date.today()
-            month_param = self.request.GET.get('summary_month')
-            if month_param:
-                try:
-                    year, month = month_param.split('-')
-                    selected_month = date(int(year), int(month), 1)
-                except Exception:
-                    selected_month = today.replace(day=1)
-            else:
-                selected_month = today.replace(day=1)
-                month_param = selected_month.strftime('%Y-%m')
-
-            if house:
-                current_month_expenses = Expense.objects.filter(
-                    house=house,
-                    month=selected_month
-                ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
-                current_month_deposits = Deposit.objects.filter(
-                    house=house,
-                    month=selected_month
-                ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
-            else:
-                current_month_expenses = Decimal('0.00')
-                current_month_deposits = Decimal('0.00')
-
-            context['selected_month'] = selected_month
-            context['summary_month_value'] = month_param
-            context['current_month_expenses'] = current_month_expenses
-            context['current_month_deposits'] = current_month_deposits
-            context['current_month_balance'] = current_month_deposits - current_month_expenses
-            
-            # Recent transactions
-            recent_expenses = Expense.objects.filter(house=house).order_by('-created_at')[:5] if house else []
-            recent_deposits = Deposit.objects.filter(house=house).order_by('-created_at')[:5] if house else []
-            context['recent_expenses'] = recent_expenses
-            context['recent_deposits'] = recent_deposits
-
-            context['monthly_deposit_summaries'] = Deposit.objects.filter(
-                house=house,
-                month=selected_month
-            ).values(
-                'month'
-            ).annotate(
-                flat_number=F('flat__flat_number'),
-                owner_name=Coalesce(
-                    Concat(F('flat__owner__first_name'), Value(' '), F('flat__owner__last_name')),
-                    F('flat__owner__username'),
-                    Value('N/A'),
-                    output_field=CharField()
-                ),
-                total_deposits=Sum('amount')
-            ).order_by('flat_number') if house else []
-
-            context['monthly_expense_summaries'] = Expense.objects.filter(
-                house=house,
-                month=selected_month
-            ).values(
-                'category__name'
-            ).annotate(
-                total_expenses=Sum('amount')
-            ).order_by('category__name') if house else []
-
-            # Unpaid flats for current month (Service Charge)
-            if house:
-                service_cat, _ = DepositCategory.objects.get_or_create(name='Service Charge')
-                today = date.today()
-                first_day = today.replace(day=1)
-                paid_flat_ids = Deposit.objects.filter(house=house, month=first_day, category=service_cat).values_list('flat_id', flat=True)
-                unpaid_flats = house.flats.exclude(id__in=paid_flat_ids)
-                context['unpaid_flats'] = unpaid_flats
-            else:
-                context['unpaid_flats'] = []
-            
         else:
-            # Flat owner dashboard
-            flats = user.flats_owned.all()
-            context['flats'] = flats
-            context['is_manager'] = False
-            
-            if flats.exists():
-                # Get house information
-                house = House.objects.filter(flats__in=flats).distinct().first()
-                context['house'] = house
-                
-                # Calculate deposits for this flat owner
-                total_deposits = Deposit.objects.filter(flat__in=flats).aggregate(
-                    total=Sum('amount')
-                )['total'] or Decimal('0.00')
-                context['total_deposits'] = total_deposits
-                
-                # Current month summary
-                today = date.today()
-                first_day = today.replace(day=1)
-                
-                context['monthly_deposit_summaries'] = Deposit.objects.filter(flat__in=flats).values(
-                    'month'
-                ).annotate(
-                    flat_number=F('flat__flat_number'),
-                    owner_name=Coalesce(
-                        Concat(F('flat__owner__first_name'), Value(' '), F('flat__owner__last_name')),
-                        F('flat__owner__username'),
-                        Value('N/A'),
-                        output_field=CharField()
-                    ),
-                    total_deposits=Sum('amount')
-                ).order_by('-month', 'flat_number')
-                
-                context['current_month_summary'] = MonthlySummary.objects.filter(
-                    house=house,
-                    month=first_day
-                ).first()
-        
+            house = House.objects.filter(flats__owner=user).distinct().first()
+        context['house'] = house
+
+        if house:
+            total_expenses = Expense.objects.filter(house=house).aggregate(
+                total=Sum('amount')
+            )['total'] or Decimal('0.00')
+            total_deposits = Deposit.objects.filter(house=house).aggregate(
+                total=Sum('amount')
+            )['total'] or Decimal('0.00')
+        else:
+            total_expenses = Decimal('0.00')
+            total_deposits = Decimal('0.00')
+
+        context['total_expenses'] = total_expenses
+        context['total_deposits'] = total_deposits
+        context['total_balance'] = total_deposits - total_expenses
+
+        today = date.today()
+        month_param = self.request.GET.get('summary_month')
+        if month_param:
+            try:
+                year, month = month_param.split('-')
+                selected_month = date(int(year), int(month), 1)
+            except Exception:
+                raw_m = today.month - 2
+                selected_month = date(today.year + raw_m // 12, raw_m % 12 + 1, 1)
+                month_param = selected_month.strftime('%Y-%m')
+        else:
+            raw_m = today.month - 2
+            selected_month = date(today.year + raw_m // 12, raw_m % 12 + 1, 1)
+            month_param = selected_month.strftime('%Y-%m')
+
+        if house:
+            current_month_expenses = Expense.objects.filter(
+                house=house, month=selected_month
+            ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+            current_month_deposits = Deposit.objects.filter(
+                house=house, month=selected_month
+            ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+        else:
+            current_month_expenses = Decimal('0.00')
+            current_month_deposits = Decimal('0.00')
+
+        context['selected_month'] = selected_month
+        context['summary_month_value'] = month_param
+        context['current_month_expenses'] = current_month_expenses
+        context['current_month_deposits'] = current_month_deposits
+        context['current_month_balance'] = current_month_deposits - current_month_expenses
+
+        if house:
+            service_cat, _ = DepositCategory.objects.get_or_create(name='Service Charge')
+
+            service_charges_qs = Deposit.objects.filter(
+                house=house, month=selected_month, category=service_cat
+            ).select_related('flat', 'flat__owner').order_by('flat__flat_number')
+            context['monthly_service_charges'] = service_charges_qs
+            context['monthly_service_charge_total'] = service_charges_qs.aggregate(
+                total=Sum('amount')
+            )['total'] or Decimal('0.00')
+
+            other_deposits_qs = Deposit.objects.filter(
+                house=house, month=selected_month,
+            ).exclude(category=service_cat).select_related(
+                'flat', 'flat__owner', 'category'
+            ).order_by('category__name')
+            context['monthly_other_deposits'] = other_deposits_qs
+            context['monthly_other_deposit_total'] = other_deposits_qs.aggregate(
+                total=Sum('amount')
+            )['total'] or Decimal('0.00')
+
+            context['monthly_expenses'] = Expense.objects.filter(
+                house=house, month=selected_month
+            ).select_related('category').order_by('category__name')
+
+            context['expense_by_category'] = list(
+                Expense.objects.filter(house=house, month=selected_month)
+                .values('category__name').annotate(total=Sum('amount')).order_by('-total')
+            )
+
+            end_month = today.replace(day=1)
+            raw_start = end_month.month - 1 - 11
+            start_month = date(end_month.year + raw_start // 12, raw_start % 12 + 1, 1)
+
+            trend_deposits = {
+                item['month']: item['total']
+                for item in Deposit.objects.filter(
+                    house=house, month__gte=start_month, month__lte=end_month
+                ).values('month').annotate(total=Sum('amount'))
+            }
+            trend_expenses = {
+                item['month']: item['total']
+                for item in Expense.objects.filter(
+                    house=house, month__gte=start_month, month__lte=end_month
+                ).values('month').annotate(total=Sum('amount'))
+            }
+
+            monthly_trend = []
+            for i in range(11, -1, -1):
+                raw_m = end_month.month - 1 - i
+                tm = date(end_month.year + raw_m // 12, raw_m % 12 + 1, 1)
+                m_dep = trend_deposits.get(tm, Decimal('0.00'))
+                m_exp = trend_expenses.get(tm, Decimal('0.00'))
+                monthly_trend.append({
+                    'month': tm,
+                    'total_deposits': m_dep,
+                    'total_expenses': m_exp,
+                    'balance': m_dep - m_exp,
+                })
+            context['monthly_trend'] = monthly_trend
+
+            first_day = today.replace(day=1)
+            paid_flat_ids = Deposit.objects.filter(
+                house=house, month=first_day, category=service_cat
+            ).values_list('flat_id', flat=True)
+            context['unpaid_flats'] = house.flats.exclude(id__in=paid_flat_ids)
+        else:
+            context['monthly_service_charges'] = []
+            context['monthly_service_charge_total'] = Decimal('0.00')
+            context['monthly_other_deposits'] = []
+            context['monthly_other_deposit_total'] = Decimal('0.00')
+            context['monthly_expenses'] = []
+            context['expense_by_category'] = []
+            context['monthly_trend'] = []
+            context['unpaid_flats'] = []
+
         return context
 
 

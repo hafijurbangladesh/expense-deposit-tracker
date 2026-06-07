@@ -1,268 +1,295 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Add Expenses - Samprity Abason{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h1><i class="fas fa-receipt"></i> Add Expenses</h1>
-        <p class="text-muted">Select one or more expense categories and enter details for each selected item.</p>
-    </div>
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <i class="fas fa-receipt text-amber-500"></i> Add Expenses
+    </h1>
+    <p class="text-sm text-gray-500 mt-1">Select expense categories and enter details for each item.</p>
 </div>
 
 {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
+<div class="alert-danger mb-4">
+    <i class="fas fa-exclamation-circle shrink-0"></i>
+    <span>{{ error }}</span>
+</div>
 {% else %}
-    <div class="card mb-4">
-        <div class="card-body">
-            <form method="get" id="monthFilterForm" class="row g-3 align-items-end" action="">
-                <div class="col-auto">
-                    <label class="form-label small" for="id_month">Month <span class="text-danger">*</span></label>
-                    {{ month_form.month }}
+
+<!-- Month filter -->
+<div class="card mb-5">
+    <div class="p-5">
+        <form method="get" id="monthFilterForm" class="flex items-end gap-4">
+            <div class="w-48">
+                <label for="id_month">Month <span class="text-red-500">*</span></label>
+                {{ month_form.month }}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Expense formset -->
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="expense">
+    <input type="hidden" name="month" value="{{ selected_month|date:'Y-m' }}">
+    {{ expense_formset.management_form }}
+
+    <div class="card mb-5">
+        <div class="px-5 py-4 border-b border-gray-100">
+            <h5 class="font-semibold text-gray-800">Expense Categories</h5>
+            <p class="text-xs text-gray-500 mt-0.5">Month: {{ selected_month|date:"F Y" }}</p>
+        </div>
+        <div class="p-5 space-y-4">
+            {% for form in expense_formset.forms %}
+            <div class="rounded-xl border border-gray-200 p-4">
+                {{ form.category_id }}
+                {{ form.category_name }}
+                {% if form.paid %}
+                <p class="font-semibold text-gray-700 mb-2">{{ form.category_label }}</p>
+                <div class="alert-success">
+                    <i class="fas fa-check-circle shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong>{{ form.category_label }}</strong> is already recorded for {{ selected_month|date:"F Y" }}.
+                        {% for expense in form.paid_entries %}
+                        <div class="text-xs text-emerald-700 mt-1">
+                            ৳{{ expense.amount|floatformat:2 }} paid on {{ expense.payment_date|date:"d M Y" }}
+                            {% if expense.description %} &ndash; {{ expense.description }}{% endif %}
+                            {% if expense.receipt %}
+                            <a href="{{ expense.receipt.url }}" class="ml-2 underline" target="_blank" rel="noopener noreferrer">
+                                <i class="fas fa-file-download"></i> Receipt
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </form>
+                {% else %}
+                <p class="font-semibold text-gray-800 mb-3">{{ form.category_label }}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label for="{{ form.amount.id_for_label }}">
+                            {{ form.amount.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.amount }}
+                        {{ form.amount.errors }}
+                    </div>
+                    <div>
+                        <label for="{{ form.bill_date.id_for_label }}">
+                            {{ form.bill_date.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.bill_date }}
+                        {{ form.bill_date.errors }}
+                    </div>
+                    <div>
+                        <label for="{{ form.payment_date.id_for_label }}">
+                            {{ form.payment_date.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.payment_date }}
+                        {{ form.payment_date.errors }}
+                    </div>
+                    <div>
+                        {{ form.receipt.label_tag }}
+                        {{ form.receipt }}
+                        {{ form.receipt.errors }}
+                    </div>
+                </div>
+                <div class="mt-3">
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                    {{ form.description.errors }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
         </div>
     </div>
 
-    <form method="post" enctype="multipart/form-data" class="needs-validation">
-        {% csrf_token %}
-        <input type="hidden" name="form_type" value="expense">
-        <input type="hidden" name="month" value="{{ selected_month|date:'Y-m' }}">
-        {{ expense_formset.management_form }}
+    <div class="flex gap-3 mb-6">
+        <button type="submit" class="btn-warning">
+            <i class="fas fa-save"></i> Save Selected Expenses
+        </button>
+        <a href="{% url 'dashboard:dashboard' %}" class="btn-outline">
+            <i class="fas fa-times"></i> Cancel
+        </a>
+    </div>
+</form>
 
-        <div class="card mb-4">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0">Expense Categories</h5>
-                <p class="mb-0 text-muted">Month: {{ selected_month|date:"F Y" }}</p>
-            </div>
-            <div class="card-body">
-                {% for form in expense_formset.forms %}
-                    <div class="border rounded p-3 mb-3">
-                        {{ form.category_id }}
-                        {{ form.category_name }}
-                        {% if form.paid %}
-                            <div class="mb-2">
-                                <strong>{{ form.category_label }}</strong>
-                            </div>
-                            <div class="alert alert-success mb-3">
-                                <strong>{{ form.category_label }}</strong> is already recorded for {{ selected_month|date:"F Y" }}.
-                                {% for expense in form.paid_entries %}
-                                    <div class="small text-muted mt-1">
-                                        ৳{{ expense.amount|floatformat:2 }} paid on {{ expense.payment_date|date:"d M Y" }}
-                                        {% if expense.description %}- {{ expense.description }}{% endif %}
-                                        {% if expense.receipt %}
-                                            <div class="mt-2">
-                                                <a href="{{ expense.receipt.url }}" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener noreferrer">
-                                                    <i class="fas fa-file-download"></i> Receipt
-                                                </a>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <p class="fw-bold mb-2">{{ form.category_label }}</p>
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <label class="form-label" for="{{ form.amount.id_for_label }}">{{ form.amount.label }} <span class="text-danger">*</span></label>
-                                    {{ form.amount }}
-                                    {{ form.amount.errors }}
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label" for="{{ form.bill_date.id_for_label }}">{{ form.bill_date.label }} <span class="text-danger">*</span></label>
-                                    {{ form.bill_date }}
-                                    {{ form.bill_date.errors }}
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label" for="{{ form.payment_date.id_for_label }}">{{ form.payment_date.label }} <span class="text-danger">*</span></label>
-                                    {{ form.payment_date }}
-                                    {{ form.payment_date.errors }}
-                                </div>
-                                <div class="col-md-3">
-                                    {{ form.receipt.label_tag }}
-                                    {{ form.receipt }}
-                                    {{ form.receipt.errors }}
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                {{ form.description.label_tag }}
-                                {{ form.description }}
-                                {{ form.description.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
+<!-- Edit expense card (hidden until Edit clicked) -->
+<div class="card mb-6 border-2 border-blue-500 hidden" id="editExpenseCard">
+    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h5 class="font-semibold text-blue-700 flex items-center gap-2">
+            <i class="fas fa-edit"></i> Edit Expense
+        </h5>
+        <button type="button" onclick="cancelExpenseEdit()" class="btn-outline btn-sm">
+            <i class="fas fa-times"></i> Cancel Edit
+        </button>
+    </div>
+    <div class="p-5">
+        {% if edit_expense_form and edit_expense_form.non_field_errors %}
+        <div class="alert-danger mb-4">
+            <span>{{ edit_expense_form.non_field_errors }}</span>
         </div>
-
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-warning">Save Selected Expenses</button>
-            <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
-        </div>
-    </form>
-
-    <!-- Edit Expense Form (hidden until Edit clicked) -->
-    <div class="card mt-4 border-primary d-none" id="editExpenseCard">
-        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-edit text-primary"></i> Edit Expense</h5>
-            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cancelExpenseEdit()">
-                <i class="fas fa-times me-1"></i> Cancel Edit
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="edit_expense">
+            <input type="hidden" name="expense_id" id="editExpenseId">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div>
+                    <label for="edit_exp_category">Category <span class="text-red-500">*</span></label>
+                    <select name="category" id="edit_exp_category" required>
+                        {% for cat in expense_categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="edit_exp_amount">Amount <span class="text-red-500">*</span></label>
+                    <input type="number" step="0.01" name="amount" id="edit_exp_amount" required>
+                </div>
+                <div>
+                    <label for="edit_exp_bill_date">Bill Date <span class="text-red-500">*</span></label>
+                    <input type="date" name="bill_date" id="edit_exp_bill_date" required>
+                </div>
+                <div>
+                    <label for="edit_exp_payment_date">Payment Date <span class="text-red-500">*</span></label>
+                    <input type="date" name="payment_date" id="edit_exp_payment_date" required>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label for="edit_exp_month">Month <span class="text-red-500">*</span></label>
+                    <input type="month" name="month" id="edit_exp_month" required>
+                </div>
+                <div>
+                    <label for="edit_exp_receipt">Receipt</label>
+                    <input type="file" name="receipt" id="edit_exp_receipt">
+                </div>
+                <div>
+                    <label for="edit_exp_description">Description</label>
+                    <textarea name="description" id="edit_exp_description" rows="1"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn-primary w-full">
+                <i class="fas fa-save"></i> Update Expense
             </button>
-        </div>
-        <div class="card-body">
-            {% if edit_expense_form and edit_expense_form.non_field_errors %}
-                <div class="alert alert-danger">{{ edit_expense_form.non_field_errors }}</div>
-            {% endif %}
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="form_type" value="edit_expense">
-                <input type="hidden" name="expense_id" id="editExpenseId">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label" for="edit_exp_category">Category <span class="text-danger">*</span></label>
-                        <select name="category" id="edit_exp_category" class="form-select" required>
-                            {% for cat in expense_categories %}
-                                <option value="{{ cat.id }}">{{ cat.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label" for="edit_exp_amount">Amount <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" name="amount" id="edit_exp_amount" class="form-control" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label" for="edit_exp_bill_date">Bill Date <span class="text-danger">*</span></label>
-                        <input type="date" name="bill_date" id="edit_exp_bill_date" class="form-control" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label" for="edit_exp_payment_date">Payment Date <span class="text-danger">*</span></label>
-                        <input type="date" name="payment_date" id="edit_exp_payment_date" class="form-control" required>
-                    </div>
-                </div>
-                <div class="row g-3 mt-1">
-                    <div class="col-md-4">
-                        <label class="form-label" for="edit_exp_month">Month <span class="text-danger">*</span></label>
-                        <input type="month" name="month" id="edit_exp_month" class="form-control" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label" for="edit_exp_receipt">Receipt</label>
-                        <input type="file" name="receipt" id="edit_exp_receipt" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label" for="edit_exp_description">Description</label>
-                        <textarea name="description" id="edit_exp_description" class="form-control" rows="1"></textarea>
-                    </div>
-                </div>
-                <div class="d-grid mt-3">
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Update Expense</button>
-                </div>
-            </form>
-        </div>
+        </form>
     </div>
+</div>
 
-    <div class="card mt-4">
-        <div class="card-header bg-white border-bottom">
-            <h5 class="mb-0">Expense History</h5>
+<!-- Expense history -->
+<div class="card">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h5 class="font-semibold text-gray-800">Expense History</h5>
+    </div>
+    <div class="p-5">
+        {% if edit_expense_error %}
+        <div class="alert-danger mb-4">
+            <span>{{ edit_expense_error }}</span>
         </div>
-        <div class="card-body">
-            {% if edit_expense_error %}
-                <div class="alert alert-danger">{{ edit_expense_error }}</div>
-            {% endif %}
-            <div class="table-responsive">
-                <table class="table table-hover table-sm">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Amount</th>
-                            <th>Bill Date</th>
-                            <th>Payment Date</th>
-                            <th>Receipt</th>
-                            <th>Action</th>
+        {% endif %}
+        <div class="overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th class="text-right">Amount</th>
+                        <th>Bill Date</th>
+                        <th>Payment Date</th>
+                        <th>Receipt</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if expense_history %}
+                        {% for group in expense_history %}
+                        <tr class="bg-gray-50">
+                            <td colspan="6" class="font-semibold text-gray-600 text-xs uppercase tracking-wider py-2">
+                                {{ group.month|date:"F Y" }}
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% if expense_history %}
-                            {% for group in expense_history %}
-                                <tr class="table-secondary">
-                                    <td colspan="6" class="fw-semibold">{{ group.month|date:"F Y" }}</td>
-                                </tr>
-                                {% for expense in group.expenses %}
-                                    <tr>
-                                        <td>{{ expense.category.name }}</td>
-                                        <td class="text-warning">৳{{ expense.amount|floatformat:2 }}</td>
-                                        <td>{{ expense.bill_date|date:"d M Y" }}</td>
-                                        <td>{{ expense.payment_date|date:"d M Y" }}</td>
-                                        <td>
-                                            {% if expense.receipt %}
-                                                <a href="{{ expense.receipt.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary">View</a>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary edit-expense-btn"
-                                                data-id="{{ expense.id }}"
-                                                data-category="{{ expense.category.id }}"
-                                                data-amount="{{ expense.amount }}"
-                                                data-month="{{ expense.month|date:'Y-m' }}"
-                                                data-bill-date="{{ expense.bill_date|date:'Y-m-d' }}"
-                                                data-payment-date="{{ expense.payment_date|date:'Y-m-d' }}"
-                                                data-description="{{ expense.description }}">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td colspan="6" class="text-center text-muted">No expenses found.</td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-
-            {% if expense_history.has_other_pages %}
-            <nav class="mt-3">
-                <ul class="pagination pagination-sm justify-content-end mb-0 flex-wrap">
-                    {% if expense_history.has_previous %}
-                        <li class="page-item"><a class="page-link" href="?month={{ selected_month|date:'Y-m' }}&page={{ expense_history.previous_page_number }}">&laquo;</a></li>
+                        {% for expense in group.expenses %}
+                        <tr>
+                            <td>{{ expense.category.name }}</td>
+                            <td class="text-right font-semibold text-amber-600">৳{{ expense.amount|floatformat:2 }}</td>
+                            <td>{{ expense.bill_date|date:"d M Y" }}</td>
+                            <td>{{ expense.payment_date|date:"d M Y" }}</td>
+                            <td>
+                                {% if expense.receipt %}
+                                <a href="{{ expense.receipt.url }}" target="_blank" rel="noopener noreferrer"
+                                   class="btn-outline-secondary btn-sm">View</a>
+                                {% else %}<span class="text-gray-400">—</span>{% endif %}
+                            </td>
+                            <td>
+                                <button type="button" class="btn-outline-primary btn-sm edit-expense-btn"
+                                    data-id="{{ expense.id }}"
+                                    data-category="{{ expense.category.id }}"
+                                    data-amount="{{ expense.amount }}"
+                                    data-month="{{ expense.month|date:'Y-m' }}"
+                                    data-bill-date="{{ expense.bill_date|date:'Y-m-d' }}"
+                                    data-payment-date="{{ expense.payment_date|date:'Y-m-d' }}"
+                                    data-description="{{ expense.description }}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
                     {% else %}
-                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                    <tr>
+                        <td colspan="6" class="text-center text-gray-400 py-8">No expenses found.</td>
+                    </tr>
                     {% endif %}
-                    {% for month in expense_months %}
-                        {% with forloop.counter as page_num %}
-                        <li class="page-item {% if expense_history.number == page_num %}active{% endif %}">
-                            <a class="page-link" href="?month={{ selected_month|date:'Y-m' }}&page={{ page_num }}">{{ month|date:"M y" }}</a>
-                        </li>
-                        {% endwith %}
-                    {% endfor %}
-                    {% if expense_history.has_next %}
-                        <li class="page-item"><a class="page-link" href="?month={{ selected_month|date:'Y-m' }}&page={{ expense_history.next_page_number }}">&raquo;</a></li>
-                    {% else %}
-                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
+                </tbody>
+            </table>
         </div>
+
+        {% if expense_history.has_other_pages %}
+        <nav class="mt-4 flex justify-end items-center gap-1">
+            {% if expense_history.has_previous %}
+            <a href="?month={{ selected_month|date:'Y-m' }}&page={{ expense_history.previous_page_number }}"
+               class="page-link">&laquo;</a>
+            {% else %}
+            <span class="page-link-disabled">&laquo;</span>
+            {% endif %}
+
+            {% for month in expense_months %}{% with forloop.counter as page_num %}
+            <a href="?month={{ selected_month|date:'Y-m' }}&page={{ page_num }}"
+               class="{% if expense_history.number == page_num %}page-link-active{% else %}page-link{% endif %}">
+                {{ month|date:"M y" }}
+            </a>
+            {% endwith %}{% endfor %}
+
+            {% if expense_history.has_next %}
+            <a href="?month={{ selected_month|date:'Y-m' }}&page={{ expense_history.next_page_number }}"
+               class="page-link">&raquo;</a>
+            {% else %}
+            <span class="page-link-disabled">&raquo;</span>
+            {% endif %}
+        </nav>
+        {% endif %}
     </div>
+</div>
+
 {% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <script>
 function cancelExpenseEdit() {
-    document.getElementById('editExpenseCard').classList.add('d-none');
+    document.getElementById('editExpenseCard').classList.add('hidden');
 }
 
 document.querySelectorAll('.edit-expense-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
-        document.getElementById('editExpenseId').value   = btn.dataset.id;
-        document.getElementById('edit_exp_amount').value = btn.dataset.amount;
-        document.getElementById('edit_exp_month').value  = btn.dataset.month;
-        document.getElementById('edit_exp_bill_date').value    = btn.dataset.billDate;
-        document.getElementById('edit_exp_payment_date').value = btn.dataset.paymentDate;
-        document.getElementById('edit_exp_description').value  = btn.dataset.description;
+        document.getElementById('editExpenseId').value          = btn.dataset.id;
+        document.getElementById('edit_exp_amount').value        = btn.dataset.amount;
+        document.getElementById('edit_exp_month').value         = btn.dataset.month;
+        document.getElementById('edit_exp_bill_date').value     = btn.dataset.billDate;
+        document.getElementById('edit_exp_payment_date').value  = btn.dataset.paymentDate;
+        document.getElementById('edit_exp_description').value   = btn.dataset.description;
 
         var catSel = document.getElementById('edit_exp_category');
         Array.from(catSel.options).forEach(function (o) {
@@ -270,12 +297,11 @@ document.querySelectorAll('.edit-expense-btn').forEach(function (btn) {
         });
 
         var card = document.getElementById('editExpenseCard');
-        card.classList.remove('d-none');
+        card.classList.remove('hidden');
         card.scrollIntoView({ behavior: 'smooth' });
     });
 });
 
-// Auto-show edit card if server returned validation errors
 {% if edit_expense_id %}
 (function () {
     var btn = document.querySelector('.edit-expense-btn[data-id="{{ edit_expense_id }}"]');

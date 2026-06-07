@@ -1,99 +1,27 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from houseexpense.core.models import House, Expense, Deposit, MonthlySummary, ExpenseCategory
+from houseexpense.core.models import House, Expense, Deposit, MonthlySummary
 from django.db.models import Sum
 from datetime import date, timedelta
 from decimal import Decimal
-import json
-from itertools import groupby
 
 
 class ReportsHomeView(LoginRequiredMixin, TemplateView):
     template_name = 'reports/reports_home.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        
+        context['is_manager'] = user.is_manager()
+
         if user.is_manager():
             context['house'] = House.objects.filter(manager=user).first()
-            context['is_manager'] = True
         else:
-            context['is_manager'] = False
-        
+            context['house'] = House.objects.filter(flats__owner=user).distinct().first()
+
         return context
 
-
-class ExpenseCategoryReportView(LoginRequiredMixin, TemplateView):
-    template_name = 'reports/expense_category_report.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        
-        if not user.is_manager():
-            return {'error': 'Access denied'}
-        
-        house_id = self.kwargs.get('house_id')
-        try:
-            house = House.objects.get(id=house_id, manager=user)
-            context['house'] = house
-            
-            # Get all expenses grouped by category
-            expenses_by_category = Expense.objects.filter(house=house).values(
-                'category__name'
-            ).annotate(total=Sum('amount')).order_by('-total')
-            
-            context['expenses_by_category'] = expenses_by_category
-            
-            # Get top expense categories
-            context['top_categories'] = list(expenses_by_category[:5])
-            
-        except House.DoesNotExist:
-            context['error'] = 'House not found'
-        
-        return context
-
-
-class AnnualReportView(LoginRequiredMixin, TemplateView):
-    template_name = 'reports/annual_report.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        
-        if not user.is_manager():
-            return {'error': 'Access denied'}
-        
-        house_id = self.kwargs.get('house_id')
-        try:
-            house = House.objects.get(id=house_id, manager=user)
-            context['house'] = house
-            
-            # Get last 12 months
-            today = date.today()
-            twelve_months_ago = today - timedelta(days=365)
-            
-            summaries = MonthlySummary.objects.filter(
-                house=house,
-                month__gte=twelve_months_ago
-            ).order_by('month')
-            
-            context['monthly_summaries'] = summaries
-            
-            # Calculate totals
-            total_expenses = sum([s.total_expenses for s in summaries])
-            total_deposits = sum([s.total_deposits for s in summaries])
-            
-            context['total_expenses'] = total_expenses
-            context['total_deposits'] = total_deposits
-            context['total_balance'] = total_deposits - total_expenses
-            
-        except House.DoesNotExist:
-            context['error'] = 'House not found'
-        
-        return context
 
 
 class FlatWiseReportView(LoginRequiredMixin, TemplateView):
@@ -103,13 +31,17 @@ class FlatWiseReportView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
-        if not user.is_manager():
-            context['error'] = 'Access denied'
-            return context
-
         house_id = self.kwargs.get('house_id')
         try:
-            house = House.objects.get(id=house_id, manager=user)
+            house = House.objects.get(id=house_id)
+            if user.is_manager():
+                if house.manager != user:
+                    context['error'] = 'Access denied'
+                    return context
+            else:
+                if not house.flats.filter(owner=user).exists():
+                    context['error'] = 'Access denied'
+                    return context
             context['house'] = house
 
             today = date.today()
@@ -177,13 +109,17 @@ class MonthWiseReportView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
-        if not user.is_manager():
-            context['error'] = 'Access denied'
-            return context
-
         house_id = self.kwargs.get('house_id')
         try:
-            house = House.objects.get(id=house_id, manager=user)
+            house = House.objects.get(id=house_id)
+            if user.is_manager():
+                if house.manager != user:
+                    context['error'] = 'Access denied'
+                    return context
+            else:
+                if not house.flats.filter(owner=user).exists():
+                    context['error'] = 'Access denied'
+                    return context
             context['house'] = house
 
             # Year filter

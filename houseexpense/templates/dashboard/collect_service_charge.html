@@ -3,94 +3,105 @@
 {% block title %}Collect Service Charge - Samprity Abason{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h1><i class="fas fa-coins"></i> Collect Service Charge</h1>
-        <p class="text-muted">Collect monthly service charge for selected flats.</p>
-    </div>
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <i class="fas fa-coins text-amber-500"></i> Collect Service Charge
+    </h1>
+    <p class="text-sm text-gray-500 mt-1">Collect monthly service charge for selected flats.</p>
 </div>
 
 {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
+<div class="alert-danger mb-4">
+    <i class="fas fa-exclamation-circle shrink-0"></i>
+    <span>{{ error }}</span>
+</div>
 {% else %}
-    <div class="card">
-        <div class="card-body">
-            <h5 class="mb-3">{{ house.name }}</h5>
 
-            <form method="get" class="row g-3 align-items-end mb-4" id="month-load-form">
-                <div class="col-md-6">
-                    <label class="form-label small">Month</label>
-                    {{ form.month }}
+<div class="card mb-6">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h5 class="font-semibold text-gray-800">{{ house.name }}</h5>
+    </div>
+    <div class="p-5">
+
+        <!-- Month picker -->
+        <form method="get" id="month-load-form" class="flex items-end gap-4 mb-6">
+            <div class="w-56">
+                <label>Month</label>
+                {{ form.month }}
+            </div>
+        </form>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var inp = document.querySelector('#month-load-form input[name="month"]');
+                if (inp) inp.addEventListener('change', function () { this.form.submit(); });
+            });
+        </script>
+
+        {% if month_selected %}
+
+            {% if paid_flats.exists %}
+            <div class="alert-warning mb-4">
+                <i class="fas fa-exclamation-triangle shrink-0 mt-0.5"></i>
+                <span>
+                    These flats have already paid service charge for <strong>{{ selected_month|date:'F Y' }}</strong>:
+                    <strong>{% for flat in paid_flats %}{{ flat.flat_number }}{% if not forloop.last %}, {% endif %}{% endfor %}</strong>
+                </span>
+            </div>
+            {% else %}
+            <div class="alert-success mb-4">
+                <i class="fas fa-check-circle shrink-0 mt-0.5"></i>
+                <span>No flats have paid service charge for <strong>{{ selected_month|date:'F Y' }}</strong> yet.</span>
+            </div>
+            {% endif %}
+
+            {% if unpaid_flats %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="month" value="{{ selected_month|date:'Y-m' }}">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label>Month</label>
+                        <input type="month" value="{{ selected_month|date:'Y-m' }}" disabled class="bg-gray-50">
+                    </div>
+                    <div>
+                        <label>Deposit Date</label>
+                        {{ form.deposit_date }}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label>Amount <span class="text-gray-400 font-normal">(optional)</span></label>
+                    {{ form.amount }}
+                    <p class="mt-1 text-xs text-gray-500">Leave blank to use each flat's default monthly charge.</p>
+                </div>
+
+                <div class="mb-6">
+                    <label class="mb-2">Select Flats</label>
+                    {{ form.flats }}
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="submit" class="btn-success">
+                        <i class="fas fa-check"></i> Collect for selected flats
+                    </button>
+                    <a href="{% url 'dashboard:dashboard' %}" class="btn-outline">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
                 </div>
             </form>
 
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const monthInput = document.querySelector('#month-load-form input[name="month"]');
-                    if (monthInput) {
-                        monthInput.addEventListener('change', function () {
-                            this.form.submit();
-                        });
-                    }
-                });
-            </script>
-
-            {% if month_selected %}
-                {% if paid_flats.exists %}
-                    <div class="alert alert-warning">
-                        These flats have already paid service charge for {{ selected_month|date:'F Y' }}:
-                        <strong>
-                            {% for flat in paid_flats %}
-                                {{ flat.flat_number }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </strong>
-                    </div>
-                {% else %}
-                    <div class="alert alert-success">
-                        No flats have paid the service charge for {{ selected_month|date:'F Y' }} yet.
-                    </div>
-                {% endif %}
-
-                {% if unpaid_flats %}
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="month" value="{{ selected_month|date:'Y-m' }}" />
-
-                        <div class="row mb-3">
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label small">Month</label>
-                                <input type="month" class="form-control" value="{{ selected_month|date:'Y-m' }}" disabled>
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label small">Deposit Date</label>
-                                {{ form.deposit_date }}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small">Amount (optional)</label>
-                            {{ form.amount }}
-                            <div class="form-text">Leave blank to use each flat's default monthly charge.</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small">Flats</label>
-                            {{ form.flats }}
-                        </div>
-
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-success" type="submit">Collect for selected flats</button>
-                            <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
-                        </div>
-                    </form>
-                {% else %}
-                    <div class="alert alert-success">
-                        All flats have already paid the service charge for {{ selected_month|date:'F Y' }}.
-                    </div>
-                {% endif %}
+            {% else %}
+            <div class="alert-success">
+                <i class="fas fa-check-circle shrink-0 mt-0.5"></i>
+                <span>All flats have already paid the service charge for <strong>{{ selected_month|date:'F Y' }}</strong>.</span>
+            </div>
             {% endif %}
-        </div>
-    </div>
-{% endif %}
 
+        {% endif %}
+    </div>
+</div>
+
+{% endif %}
 {% endblock %}

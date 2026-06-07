@@ -4,313 +4,388 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Samprity Abason Expense Manager{% endblock %}</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.min.js"></script>
-    
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --light-bg: #ecf0f1;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .navbar {
-            background-color: var(--primary-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-        
-        .sidebar {
-            background-color: white;
-            border-right: 1px solid #dee2e6;
-            min-height: calc(100vh - 56px);
-        }
-        
-        .sidebar .nav-link {
-            color: #333;
-            border-left: 3px solid transparent;
-            padding: 0.75rem 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background-color: var(--light-bg);
-            border-left-color: var(--secondary-color);
-            color: var(--secondary-color);
-        }
-        
-        .main-content {
-            padding: 2rem;
-        }
-        
-        .card {
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border-radius: 8px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, #5dade2 100%);
-            color: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-card h6 {
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            opacity: 0.9;
-        }
-        
-        .stat-card .amount {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0.5rem 0;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-        
-        .table-hover tbody tr:hover {
-            background-color: rgba(52, 152, 219, 0.05);
-        }
-        
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
-        }
-        
-        .badge {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.85rem;
-        }
-        
-        .footer {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 2rem 0;
-            margin-top: 4rem;
-        }
-        
-        .alert-dismissible .btn-close {
-            background-color: transparent;
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+
+    <style type="text/tailwindcss">
+        @layer base {
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="number"],
+            input[type="date"],
+            input[type="month"],
+            input[type="tel"],
+            input[type="url"],
+            textarea,
+            select {
+                @apply w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700
+                       bg-white focus:outline-none focus:ring-2 focus:ring-blue-500
+                       focus:border-transparent transition-shadow
+                       disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed;
             }
-            
-            .sidebar {
-                display: none;
+            input[type="file"] {
+                @apply block w-full text-sm text-gray-600 cursor-pointer
+                       file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0
+                       file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700
+                       hover:file:bg-blue-100 focus:outline-none;
             }
-            
-            .stat-card .amount {
-                font-size: 1.5rem;
+            input[type="checkbox"] {
+                @apply w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer;
+            }
+            label {
+                @apply block text-sm font-medium text-gray-700 mb-1;
             }
         }
-        
-        .loading-spinner {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
+        @layer components {
+            /* Card */
+            .card {
+                @apply bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden;
+            }
+            /* Buttons */
+            .btn-primary {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg bg-blue-600 hover:bg-blue-700 text-white
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-success {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white
+                       focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-danger {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg bg-red-600 hover:bg-red-700 text-white
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-warning {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg bg-amber-500 hover:bg-amber-600 text-white
+                       focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-secondary {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg bg-gray-500 hover:bg-gray-600 text-white
+                       focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-outline {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50
+                       focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-outline-primary {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg border border-blue-600 text-blue-600 bg-white hover:bg-blue-50
+                       focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-outline-success {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg border border-emerald-600 text-emerald-600 bg-white hover:bg-emerald-50
+                       focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-outline-info {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg border border-sky-500 text-sky-600 bg-white hover:bg-sky-50
+                       focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-outline-secondary {
+                @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                       rounded-lg border border-gray-400 text-gray-600 bg-white hover:bg-gray-50
+                       focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-1
+                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+            }
+            .btn-sm { @apply !px-3 !py-1.5 !text-xs; }
+            .btn-lg { @apply !px-6 !py-3 !text-base; }
+            /* Alerts */
+            .alert-success {
+                @apply flex items-start gap-3 px-4 py-3 rounded-lg text-sm
+                       bg-emerald-50 text-emerald-800 border border-emerald-200;
+            }
+            .alert-danger, .alert-error {
+                @apply flex items-start gap-3 px-4 py-3 rounded-lg text-sm
+                       bg-red-50 text-red-800 border border-red-200;
+            }
+            .alert-warning {
+                @apply flex items-start gap-3 px-4 py-3 rounded-lg text-sm
+                       bg-amber-50 text-amber-800 border border-amber-200;
+            }
+            .alert-info {
+                @apply flex items-start gap-3 px-4 py-3 rounded-lg text-sm
+                       bg-blue-50 text-blue-800 border border-blue-200;
+            }
+            /* Badges */
+            .badge-success  { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700; }
+            .badge-danger   { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700; }
+            .badge-warning  { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700; }
+            .badge-info     { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sky-100 text-sky-700; }
+            .badge-secondary{ @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600; }
+            .badge-primary  { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700; }
+            .badge-dark     { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-700 text-white; }
+            /* Data table */
+            .data-table { @apply w-full text-sm text-left; }
+            .data-table thead tr { @apply bg-gray-50 border-b border-gray-200; }
+            .data-table thead th { @apply px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap; }
+            .data-table tbody tr { @apply border-b border-gray-100 hover:bg-gray-50 transition-colors; }
+            .data-table tbody td { @apply px-4 py-3 text-gray-700; }
+            .data-table tfoot tr { @apply bg-gray-50 border-t-2 border-gray-200; }
+            .data-table tfoot td { @apply px-4 py-3 font-semibold text-gray-800; }
+            /* Django form error list */
+            .errorlist { @apply mt-1 text-xs text-red-600 list-none pl-0 space-y-0.5; }
+            /* Django CheckboxSelectMultiple for flats */
+            #id_flats {
+                @apply list-none pl-0 grid grid-cols-2 md:grid-cols-3 gap-2 mt-1;
+            }
+            #id_flats li { @apply p-0 m-0; }
+            #id_flats li label {
+                @apply flex items-center gap-2.5 text-sm text-gray-700 cursor-pointer
+                       p-2.5 rounded-lg border border-gray-200 mb-0 font-normal
+                       hover:bg-blue-50 hover:border-blue-300 transition-colors;
+            }
+            /* Pagination */
+            .page-link {
+                @apply inline-flex items-center justify-center w-8 h-8 text-sm rounded-md
+                       border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors;
+            }
+            .page-link-active {
+                @apply inline-flex items-center justify-center w-8 h-8 text-sm rounded-md
+                       bg-blue-600 text-white border border-blue-600 font-medium;
+            }
+            .page-link-disabled {
+                @apply inline-flex items-center justify-center w-8 h-8 text-sm rounded-md
+                       border border-gray-200 text-gray-400 cursor-not-allowed;
+            }
         }
     </style>
-    
+
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'dashboard:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}">
-                <i class="fas fa-home"></i> Samprity Abason
+<body class="bg-gray-50 font-sans antialiased">
+
+    <!-- ── Fixed top navbar ── -->
+    <header class="fixed top-0 inset-x-0 h-14 bg-slate-800 flex items-center px-4 z-30 shadow-md">
+        {% if user.is_authenticated %}
+        <button onclick="toggleMobileSidebar()"
+                class="md:hidden text-slate-300 hover:text-white mr-3 p-1 rounded focus:outline-none">
+            <i class="fas fa-bars text-lg"></i>
+        </button>
+        {% endif %}
+
+        <a href="{% if user.is_authenticated %}{% url 'dashboard:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}"
+           class="text-white font-bold text-lg flex items-center gap-2 flex-shrink-0">
+            <i class="fas fa-home text-blue-400"></i>
+            <span class="hidden sm:inline">Samprity Abason</span>
+        </a>
+
+        {% if house %}
+        <span class="ml-3 text-slate-400 text-xs hidden md:inline truncate">{{ house.name }}</span>
+        {% endif %}
+
+        <div class="ml-auto flex items-center gap-2">
+            {% if user.is_authenticated %}
+            <div class="relative">
+                <button onclick="toggleUserMenu(event)"
+                        class="flex items-center gap-2 text-slate-200 hover:text-white text-sm py-1.5 px-2.5
+                               rounded-md hover:bg-slate-700 transition-colors focus:outline-none">
+                    <i class="fas fa-user-circle text-slate-400 text-base"></i>
+                    <span class="hidden sm:inline max-w-[120px] truncate">{{ user.get_full_name|default:user.username }}</span>
+                    <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+                </button>
+                <div id="userMenu"
+                     class="hidden absolute right-0 mt-1 w-48 bg-white border border-gray-200
+                            rounded-lg shadow-lg py-1 z-50">
+                    <a href="{% url 'accounts:profile' %}"
+                       class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                        <i class="fas fa-user text-gray-400 w-4 text-center"></i> Profile
+                    </a>
+                    <hr class="my-1 border-gray-100">
+                    <a href="{% url 'accounts:logout' %}"
+                       class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                        <i class="fas fa-sign-out-alt w-4 text-center"></i> Logout
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{% url 'accounts:login' %}"
+               class="text-sm text-slate-200 hover:text-white px-3 py-1.5 rounded-md hover:bg-slate-700 transition-colors">
+                Login
             </a>
-            {% if user.is_authenticated %}
-            <button class="btn btn-outline-light btn-sm d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
-                <i class="fas fa-bars"></i> Menu
-            </button>
             {% endif %}
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user"></i> {{ user.get_full_name|default:user.username }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                    {% endif %}
-                </ul>
-            </div>
         </div>
-    </nav>
+    </header>
 
-    {% if messages %}
-        <div class="container-fluid mt-3">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <!-- Mobile Offcanvas Sidebar -->
     {% if user.is_authenticated %}
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
-        <div class="offcanvas-header" style="background-color: var(--primary-color);">
-            <h5 class="offcanvas-title text-white" id="mobileSidebarLabel"><i class="fas fa-home"></i> Samprity Abason</h5>
-            <button type="button" class="btn-close btn-close-white"></button>
+    <!-- ── Mobile sidebar backdrop ── -->
+    <div id="sidebarOverlay" onclick="closeMobileSidebar()"
+         class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+    <!-- ── Mobile sidebar panel ── -->
+    <aside id="mobileSidebar"
+           class="fixed top-0 left-0 h-full w-64 bg-white z-50 shadow-xl
+                  -translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="flex items-center gap-2 px-4 h-14 bg-slate-800 flex-shrink-0">
+            <i class="fas fa-home text-blue-400"></i>
+            <span class="text-white font-bold flex-1">Samprity Abason</span>
+            <button onclick="closeMobileSidebar()"
+                    class="text-slate-300 hover:text-white p-1 focus:outline-none">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="offcanvas-body p-0">
-            <nav class="nav flex-column mt-2">
-                {% if user.is_manager %}
-                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">
-                        <i class="fas fa-chart-line"></i> Dashboard
-                    </a>
-                    {% if house %}
-                        <a class="nav-link {% if request.resolver_match.url_name == 'collect_service_charge' %}active{% endif %}" href="{% url 'dashboard:collect_service_charge' house.id %}">
-                            <i class="fas fa-coins"></i> Collect Service Charge
-                        </a>
-                        <a class="nav-link {% if request.resolver_match.url_name == 'add_expenses' %}active{% endif %}" href="{% url 'dashboard:add_expenses' house.id %}">
-                            <i class="fas fa-receipt"></i> Add Expenses
-                        </a>
-                        <a class="nav-link {% if request.resolver_match.url_name == 'add_deposit' %}active{% endif %}" href="{% url 'dashboard:add_deposit' house.id %}">
-                            <i class="fas fa-piggy-bank"></i> Add Other Deposit
-                        </a>
-                        <a class="nav-link {% if request.resolver_match.url_name == 'reports_home' %}active{% endif %}" href="{% url 'reports:reports_home' %}">
-                            <i class="fas fa-file-alt"></i> Reports
-                        </a>
-                    {% endif %}
-                {% else %}
-                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">
-                        <i class="fas fa-tachometer-alt"></i> My Dashboard
-                    </a>
-                {% endif %}
-            </nav>
-        </div>
-    </div>
+        <nav class="py-3 overflow-y-auto flex-1">
+            {% with rn=request.resolver_match.url_name %}
+            <a href="{% url 'dashboard:dashboard' %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if rn == 'dashboard' %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-chart-line w-4 text-center"></i> Dashboard
+            </a>
+            {% if user.is_manager and house %}
+            <a href="{% url 'dashboard:collect_service_charge' house.id %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if rn == 'collect_service_charge' %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-coins w-4 text-center"></i> Collect Service Charge
+            </a>
+            <a href="{% url 'dashboard:add_expenses' house.id %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if rn == 'add_expenses' %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-receipt w-4 text-center"></i> Add Expenses
+            </a>
+            <a href="{% url 'dashboard:add_deposit' house.id %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if rn == 'add_deposit' %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-piggy-bank w-4 text-center"></i> Add Other Deposit
+            </a>
+            {% endif %}
+            {% if house %}
+            <a href="{% url 'reports:reports_home' %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if 'report' in rn %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-file-alt w-4 text-center"></i> Reports
+            </a>
+            {% endif %}
+            {% endwith %}
+        </nav>
+    </aside>
+
+    <!-- ── Desktop sidebar ── -->
+    <aside class="hidden md:flex flex-col fixed top-14 left-0 bottom-0 w-64
+                  bg-white border-r border-gray-200 overflow-y-auto z-20">
+        <nav class="py-3">
+            {% with rn=request.resolver_match.url_name %}
+            <a href="{% url 'dashboard:dashboard' %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if rn == 'dashboard' %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-chart-line w-4 text-center"></i> Dashboard
+            </a>
+            {% if user.is_manager and house %}
+            <a href="{% url 'dashboard:collect_service_charge' house.id %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if rn == 'collect_service_charge' %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-coins w-4 text-center"></i> Collect Service Charge
+            </a>
+            <a href="{% url 'dashboard:add_expenses' house.id %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if rn == 'add_expenses' %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-receipt w-4 text-center"></i> Add Expenses
+            </a>
+            <a href="{% url 'dashboard:add_deposit' house.id %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if rn == 'add_deposit' %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-piggy-bank w-4 text-center"></i> Add Other Deposit
+            </a>
+            {% endif %}
+            {% if house %}
+            <a href="{% url 'reports:reports_home' %}"
+               class="flex items-center gap-3 px-4 py-2.5 text-sm border-l-4 transition-colors
+                      {% if 'report' in rn %}bg-blue-50 text-blue-700 font-semibold border-blue-600
+                      {% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-800 border-transparent{% endif %}">
+                <i class="fas fa-file-alt w-4 text-center"></i> Reports
+            </a>
+            {% endif %}
+            {% endwith %}
+        </nav>
+    </aside>
     {% endif %}
 
-    <div class="container-fluid">
-        <div class="row">
-            {% if user.is_authenticated %}
-                <!-- Sidebar -->
-                <div class="col-md-2 d-none d-md-block sidebar">
-                    <nav class="nav flex-column mt-3">
-                        {% if user.is_manager %}
-                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">
-                                <i class="fas fa-chart-line"></i> Dashboard
-                            </a>
-                            {% if house %}
-                                <a class="nav-link {% if request.resolver_match.url_name == 'collect_service_charge' %}active{% endif %}" href="{% url 'dashboard:collect_service_charge' house.id %}">
-                                    <i class="fas fa-coins"></i> Collect Service Charge
-                                </a>
-                                <a class="nav-link {% if request.resolver_match.url_name == 'add_expenses' %}active{% endif %}" href="{% url 'dashboard:add_expenses' house.id %}">
-                                    <i class="fas fa-receipt"></i> Add Expenses
-                                </a>
-                                <a class="nav-link {% if request.resolver_match.url_name == 'add_deposit' %}active{% endif %}" href="{% url 'dashboard:add_deposit' house.id %}">
-                                    <i class="fas fa-piggy-bank"></i> Add Other Deposit
-                                </a>
-                                <a class="nav-link {% if request.resolver_match.url_name == 'reports_home' %}active{% endif %}" href="{% url 'reports:reports_home' %}">
-                                    <i class="fas fa-file-alt"></i> Reports
-                                </a>
-                            {% endif %}
-                        {% else %}
-                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">
-                                <i class="fas fa-tachometer-alt"></i> My Dashboard
-                            </a>
-                        {% endif %}
-                    </nav>
+    <!-- ── Main content area ── -->
+    <main class="pt-14 {% if user.is_authenticated %}md:ml-64{% endif %} min-h-screen bg-gray-50">
+        <div class="p-4 md:p-6">
+
+            {% if messages %}
+            <div class="space-y-2 mb-5" id="djangoMessages">
+                {% for message in messages %}
+                <div class="alert-{{ message.tags }} relative">
+                    <span>{{ message }}</span>
+                    <button onclick="this.parentElement.remove()"
+                            class="absolute right-3 top-3 opacity-60 hover:opacity-100 focus:outline-none text-inherit">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
                 </div>
-            {% endif %}
-            
-            <!-- Main Content -->
-            <div class="col-md-{% if user.is_authenticated %}10{% else %}12{% endif %}">
-                <div class="main-content">
-                    {% block content %}{% endblock %}
-                </div>
+                {% endfor %}
             </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer text-center">
-        <div class="container">
-            {% if house %}
-                <p class="mb-1"><strong>{{ house.name }}</strong> &ndash; {{ house.address }}, {{ house.city }}</p>
             {% endif %}
-            <p class="mb-0">&copy; 2024 House Expense Management System. All rights reserved.</p>
-        </div>
-    </footer>
 
-    <!-- Loading Spinner -->
-    <div class="loading-spinner" id="loadingSpinner">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+            {% block content %}{% endblock %}
         </div>
+
+        {% if house %}
+        <footer class="border-t border-gray-200 bg-white py-3 px-6 mt-4">
+            <p class="text-xs text-gray-500 text-center">
+                <strong>{{ house.name }}</strong> &ndash; {{ house.address }}, {{ house.city }}
+            </p>
+        </footer>
+        {% endif %}
+        <p class="text-center text-xs text-gray-400 py-3">&copy; 2024 Samprity Abason Expense Manager.</p>
+    </main>
+
+    <!-- Loading overlay -->
+    <div id="loadingSpinner"
+         class="hidden fixed inset-0 bg-white/70 z-50 flex items-center justify-center">
+        <div class="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
-        // Show spinner on form submission
-        document.addEventListener('submit', function(e) {
-            const form = e.target;
-            if (form.method.toLowerCase() !== 'get') {
-                document.getElementById('loadingSpinner').style.display = 'block';
+        function toggleMobileSidebar() {
+            document.getElementById('mobileSidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.toggle('hidden');
+        }
+        function closeMobileSidebar() {
+            document.getElementById('mobileSidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
+        }
+        function toggleUserMenu(e) {
+            e.stopPropagation();
+            document.getElementById('userMenu').classList.toggle('hidden');
+        }
+        document.addEventListener('click', function () {
+            var m = document.getElementById('userMenu');
+            if (m) m.classList.add('hidden');
+        });
+        document.addEventListener('submit', function (e) {
+            if (e.target.method && e.target.method.toLowerCase() !== 'get') {
+                document.getElementById('loadingSpinner').classList.remove('hidden');
             }
         });
     </script>
-    
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

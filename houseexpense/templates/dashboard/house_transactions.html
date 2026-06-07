@@ -3,189 +3,200 @@
 {% block title %}Add Other Deposit - Samprity Abason{% endblock %}
 
 {% block content %}
+
 {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
+<div class="alert-danger mb-4">
+    <i class="fas fa-exclamation-circle shrink-0"></i>
+    <span>{{ error }}</span>
+</div>
 {% else %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1><i class="fas fa-piggy-bank text-success"></i> {{ house.name }} - Add Other Deposit</h1>
-        </div>
-    </div>
 
-    <div class="row mb-4">
-        <div class="col-md-8 mx-auto">
-            <div class="card shadow-sm" id="depositFormCard">
-                <div class="card-header bg-white border-bottom">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h5 class="mb-1" id="formCardTitle"><i class="fas fa-piggy-bank text-success"></i> Add Other Deposit</h5>
-                            <p class="mb-0 text-muted">Record any additional deposit for the house, such as miscellaneous collections or one-time payments.</p>
-                        </div>
-                        <button type="button" id="cancelEditBtn" class="btn btn-sm btn-outline-secondary d-none" onclick="resetToAddMode()">
-                            <i class="fas fa-times me-1"></i> Cancel Edit
-                        </button>
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <i class="fas fa-piggy-bank text-emerald-500"></i>
+        {{ house.name }} &mdash; Add Other Deposit
+    </h1>
+</div>
+
+<!-- Add / Edit deposit form -->
+<div class="max-w-3xl mb-8">
+    <div class="card" id="depositFormCard">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div>
+                <h5 class="font-semibold text-gray-800" id="formCardTitle">
+                    <i class="fas fa-piggy-bank text-emerald-500"></i> Add Other Deposit
+                </h5>
+                <p class="text-xs text-gray-500 mt-0.5">
+                    Record any additional deposit such as parking or miscellaneous collections.
+                </p>
+            </div>
+            <button type="button" id="cancelEditBtn" onclick="resetToAddMode()"
+                    class="btn-outline btn-sm hidden">
+                <i class="fas fa-times"></i> Cancel Edit
+            </button>
+        </div>
+        <div class="p-5">
+            <form method="post" enctype="multipart/form-data" id="depositForm">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" id="formType" value="deposit">
+                <input type="hidden" name="deposit_id" id="depositId" value="">
+
+                {% if deposit_form.non_field_errors %}
+                <div class="alert-danger mb-4">
+                    <span>{{ deposit_form.non_field_errors }}</span>
+                </div>
+                {% endif %}
+                {% if edit_form and edit_form.non_field_errors %}
+                <div class="alert-danger mb-4">
+                    <span>{{ edit_form.non_field_errors }}</span>
+                </div>
+                {% endif %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label for="{{ deposit_form.amount.id_for_label }}">
+                            {{ deposit_form.amount.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ deposit_form.amount }}
+                        {{ deposit_form.amount.errors }}
+                    </div>
+                    <div>
+                        {{ deposit_form.flat.label_tag }}
+                        {{ deposit_form.flat }}
+                        {{ deposit_form.flat.errors }}
+                    </div>
+                    <div>
+                        <label for="{{ deposit_form.category.id_for_label }}">
+                            {{ deposit_form.category.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ deposit_form.category }}
+                        {{ deposit_form.category.errors }}
                     </div>
                 </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data" action="" id="depositForm">
-                        {% csrf_token %}
-                        <input type="hidden" name="form_type" id="formType" value="deposit">
-                        <input type="hidden" name="deposit_id" id="depositId" value="">
-                        {% if deposit_form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {{ deposit_form.non_field_errors }}
-                            </div>
-                        {% endif %}
-                        {% if edit_form and edit_form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {{ edit_form.non_field_errors }}
-                            </div>
-                        {% endif %}
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ deposit_form.amount.id_for_label }}">{{ deposit_form.amount.label }} <span class="text-danger">*</span></label>
-                                {{ deposit_form.amount }}
-                                {{ deposit_form.amount.errors }}
-                            </div>
-                            <div class="col-md-4">
-                                {{ deposit_form.flat.label_tag }}
-                                {{ deposit_form.flat }}
-                                {{ deposit_form.flat.errors }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ deposit_form.category.id_for_label }}">{{ deposit_form.category.label }} <span class="text-danger">*</span></label>
-                                {{ deposit_form.category }}
-                                {{ deposit_form.category.errors }}
-                            </div>
-                        </div>
-                        <div class="row g-3 mt-3">
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ deposit_form.month.id_for_label }}">{{ deposit_form.month.label }} <span class="text-danger">*</span></label>
-                                {{ deposit_form.month }}
-                                {{ deposit_form.month.errors }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ deposit_form.deposit_date.id_for_label }}">{{ deposit_form.deposit_date.label }} <span class="text-danger">*</span></label>
-                                {{ deposit_form.deposit_date }}
-                                {{ deposit_form.deposit_date.errors }}
-                            </div>
-                            <div class="col-md-4">
-                                {{ deposit_form.receipt.label_tag }}
-                                {{ deposit_form.receipt }}
-                                {{ deposit_form.receipt.errors }}
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            {{ deposit_form.description.label_tag }}
-                            {{ deposit_form.description }}
-                            {{ deposit_form.description.errors }}
-                        </div>
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
-                                <i class="fas fa-plus me-2"></i> <span id="submitBtnText">Save Deposit</span>
-                            </button>
-                        </div>
-                    </form>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label for="{{ deposit_form.month.id_for_label }}">
+                            {{ deposit_form.month.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ deposit_form.month }}
+                        {{ deposit_form.month.errors }}
+                    </div>
+                    <div>
+                        <label for="{{ deposit_form.deposit_date.id_for_label }}">
+                            {{ deposit_form.deposit_date.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ deposit_form.deposit_date }}
+                        {{ deposit_form.deposit_date.errors }}
+                    </div>
+                    <div>
+                        {{ deposit_form.receipt.label_tag }}
+                        {{ deposit_form.receipt }}
+                        {{ deposit_form.receipt.errors }}
+                    </div>
                 </div>
-            </div>
+
+                <div class="mb-5">
+                    {{ deposit_form.description.label_tag }}
+                    {{ deposit_form.description }}
+                    {{ deposit_form.description.errors }}
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-success w-full btn-lg">
+                    <i class="fas fa-plus"></i>
+                    <span id="submitBtnText">Save Deposit</span>
+                </button>
+            </form>
         </div>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-light border-bottom">
-                    <h5 class="mb-0">Deposit History</h5>
-                </div>
-                <div class="card-body">
-                    {% if error_msg %}
-                        <div class="alert alert-danger">{{ error_msg }}</div>
-                    {% endif %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Category</th>
-                                    <th>Amount</th>
-                                    <th>Month</th>
-                                    <th>Deposit Date</th>
-                                    <th>Receipt</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% if deposits %}
-                                    {% for deposit in deposits %}
-                                        <tr>
-                                            <td>
-                                                {% if deposit.category.name == "Service Charge" %}
-                                                    Service Charge - {{ deposit.month|date:"M Y" }}{% if deposit.flat %} - Flat {{ deposit.flat.flat_number }}{% endif %}
-                                                {% else %}
-                                                    {{ deposit.category.name|default:"Deposit" }}
-                                                {% endif %}
-                                            </td>
-                                            <td class="text-success"><strong>+৳{{ deposit.amount|floatformat:2 }}</strong></td>
-                                            <td>{{ deposit.month|date:"F Y" }}</td>
-                                            <td>{{ deposit.deposit_date|date:"d M Y" }}</td>
-                                            <td>
-                                                {% if deposit.receipt %}
-                                                    <a href="{{ deposit.receipt.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary">
-                                                        View
-                                                    </a>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-outline-primary edit-deposit-btn"
-                                                    data-id="{{ deposit.id }}"
-                                                    data-amount="{{ deposit.amount }}"
-                                                    data-flat="{{ deposit.flat.id|default:'' }}"
-                                                    data-category="{{ deposit.category.id|default:'' }}"
-                                                    data-month="{{ deposit.month|date:'Y-m' }}"
-                                                    data-deposit-date="{{ deposit.deposit_date|date:'Y-m-d' }}"
-                                                    data-description="{{ deposit.description }}">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
+<!-- Deposit history -->
+<div class="card">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h5 class="font-semibold text-gray-800">Deposit History</h5>
+    </div>
+    <div class="p-5">
+        {% if error_msg %}
+        <div class="alert-danger mb-4">
+            <span>{{ error_msg }}</span>
+        </div>
+        {% endif %}
+
+        <div class="overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th class="text-right">Amount</th>
+                        <th>Month</th>
+                        <th>Deposit Date</th>
+                        <th>Receipt</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if deposits %}
+                        {% for deposit in deposits %}
+                        <tr>
+                            <td>
+                                {% if deposit.category.name == "Service Charge" %}
+                                    Service Charge - {{ deposit.month|date:"M Y" }}{% if deposit.flat %} - Flat {{ deposit.flat.flat_number }}{% endif %}
                                 {% else %}
-                                    <tr>
-                                        <td colspan="6" class="text-center text-muted">No deposits found.</td>
-                                    </tr>
+                                    {{ deposit.category.name|default:"Deposit" }}
                                 {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {% if deposits.has_other_pages %}
-                    <nav class="mt-3">
-                        <ul class="pagination pagination-sm justify-content-end mb-0">
-                            {% if deposits.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ deposits.previous_page_number }}">&laquo;</a>
-                                </li>
-                            {% else %}
-                                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                            {% endif %}
-                            {% for num in deposits.paginator.page_range %}
-                                <li class="page-item {% if deposits.number == num %}active{% endif %}">
-                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                                </li>
-                            {% endfor %}
-                            {% if deposits.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ deposits.next_page_number }}">&raquo;</a>
-                                </li>
-                            {% else %}
-                                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                            {% endif %}
-                        </ul>
-                    </nav>
+                            </td>
+                            <td class="text-right font-semibold text-emerald-600">+৳{{ deposit.amount|floatformat:2 }}</td>
+                            <td>{{ deposit.month|date:"F Y" }}</td>
+                            <td>{{ deposit.deposit_date|date:"d M Y" }}</td>
+                            <td>
+                                {% if deposit.receipt %}
+                                <a href="{{ deposit.receipt.url }}" target="_blank" rel="noopener noreferrer"
+                                   class="btn-outline-secondary btn-sm">View</a>
+                                {% else %}<span class="text-gray-400">—</span>{% endif %}
+                            </td>
+                            <td>
+                                <button type="button" class="btn-outline-primary btn-sm edit-deposit-btn"
+                                    data-id="{{ deposit.id }}"
+                                    data-amount="{{ deposit.amount }}"
+                                    data-flat="{{ deposit.flat.id|default:'' }}"
+                                    data-category="{{ deposit.category.id|default:'' }}"
+                                    data-month="{{ deposit.month|date:'Y-m' }}"
+                                    data-deposit-date="{{ deposit.deposit_date|date:'Y-m-d' }}"
+                                    data-description="{{ deposit.description }}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-gray-400 py-8">No deposits found.</td>
+                    </tr>
                     {% endif %}
-                </div>
-            </div>
+                </tbody>
+            </table>
         </div>
+
+        {% if deposits.has_other_pages %}
+        <nav class="mt-4 flex justify-end items-center gap-1">
+            {% if deposits.has_previous %}
+            <a href="?page={{ deposits.previous_page_number }}" class="page-link">&laquo;</a>
+            {% else %}<span class="page-link-disabled">&laquo;</span>{% endif %}
+
+            {% for num in deposits.paginator.page_range %}
+            <a href="?page={{ num }}"
+               class="{% if deposits.number == num %}page-link-active{% else %}page-link{% endif %}">{{ num }}</a>
+            {% endfor %}
+
+            {% if deposits.has_next %}
+            <a href="?page={{ deposits.next_page_number }}" class="page-link">&raquo;</a>
+            {% else %}<span class="page-link-disabled">&raquo;</span>{% endif %}
+        </nav>
+        {% endif %}
     </div>
+</div>
+
 {% endif %}
 {% endblock %}
 
@@ -193,14 +204,13 @@
 <script>
 (function () {
     const usedCombinations = {{ used_combinations|default:"{}"|safe }};
-    const monthInput    = document.getElementById('{{ deposit_form.month.id_for_label }}');
-    const categorySelect = document.getElementById('{{ deposit_form.category.id_for_label }}');
-    const flatSelect    = document.getElementById('{{ deposit_form.flat.id_for_label }}');
-    const amountInput   = document.getElementById('{{ deposit_form.amount.id_for_label }}');
+    const monthInput       = document.getElementById('{{ deposit_form.month.id_for_label }}');
+    const categorySelect   = document.getElementById('{{ deposit_form.category.id_for_label }}');
+    const flatSelect       = document.getElementById('{{ deposit_form.flat.id_for_label }}');
+    const amountInput      = document.getElementById('{{ deposit_form.amount.id_for_label }}');
     const depositDateInput = document.getElementById('{{ deposit_form.deposit_date.id_for_label }}');
     const descriptionInput = document.getElementById('{{ deposit_form.description.id_for_label }}');
 
-    // Track the category of the record currently being edited so we don't disable it
     let editingCategoryId = null;
 
     function updateCategoryOptions(currentMonth) {
@@ -224,18 +234,17 @@
         updateCategoryOptions();
     }
 
-    // Populate top form from Edit button data
     document.querySelectorAll('.edit-deposit-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
             editingCategoryId = btn.dataset.category;
 
-            document.getElementById('formType').value = 'edit_deposit';
+            document.getElementById('formType').value  = 'edit_deposit';
             document.getElementById('depositId').value = btn.dataset.id;
 
-            amountInput.value = btn.dataset.amount;
-            monthInput.value  = btn.dataset.month;
-            depositDateInput.value = btn.dataset.depositDate;
-            descriptionInput.value = btn.dataset.description;
+            amountInput.value       = btn.dataset.amount;
+            monthInput.value        = btn.dataset.month;
+            depositDateInput.value  = btn.dataset.depositDate;
+            descriptionInput.value  = btn.dataset.description;
 
             Array.from(flatSelect.options).forEach(function (o) {
                 o.selected = o.value === btn.dataset.flat;
@@ -247,44 +256,41 @@
                 o.selected = o.value === btn.dataset.category;
             });
 
-            // Switch UI to edit mode
             document.getElementById('formCardTitle').innerHTML =
-                '<i class="fas fa-edit text-primary"></i> Edit Deposit';
+                '<i class="fas fa-edit text-blue-600"></i> Edit Deposit';
             document.getElementById('submitBtnText').textContent = 'Update Deposit';
-            document.getElementById('submitBtn').className = 'btn btn-primary btn-lg';
-            document.getElementById('cancelEditBtn').classList.remove('d-none');
+            document.getElementById('submitBtn').className = 'btn-primary w-full btn-lg';
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
 
             document.getElementById('depositFormCard').scrollIntoView({ behavior: 'smooth' });
         });
     });
 
-    // Reset form back to Add mode
     window.resetToAddMode = function () {
         editingCategoryId = null;
-        document.getElementById('formType').value = 'deposit';
+        document.getElementById('formType').value  = 'deposit';
         document.getElementById('depositId').value = '';
         document.getElementById('depositForm').reset();
         updateCategoryOptions();
         document.getElementById('formCardTitle').innerHTML =
-            '<i class="fas fa-piggy-bank text-success"></i> Add Other Deposit';
+            '<i class="fas fa-piggy-bank text-emerald-500"></i> Add Other Deposit';
         document.getElementById('submitBtnText').textContent = 'Save Deposit';
-        document.getElementById('submitBtn').className = 'btn btn-success btn-lg';
-        document.getElementById('cancelEditBtn').classList.add('d-none');
+        document.getElementById('submitBtn').className = 'btn-success w-full btn-lg';
+        document.getElementById('cancelEditBtn').classList.add('hidden');
     };
 
-    // If server returned edit errors, restore edit mode state
     {% if edit_deposit_id %}
     (function () {
         var btn = document.querySelector('.edit-deposit-btn[data-id="{{ edit_deposit_id }}"]');
         if (btn) {
             editingCategoryId = btn.dataset.category;
-            document.getElementById('formType').value = 'edit_deposit';
+            document.getElementById('formType').value  = 'edit_deposit';
             document.getElementById('depositId').value = btn.dataset.id;
             document.getElementById('formCardTitle').innerHTML =
-                '<i class="fas fa-edit text-primary"></i> Edit Deposit';
+                '<i class="fas fa-edit text-blue-600"></i> Edit Deposit';
             document.getElementById('submitBtnText').textContent = 'Update Deposit';
-            document.getElementById('submitBtn').className = 'btn btn-primary btn-lg';
-            document.getElementById('cancelEditBtn').classList.remove('d-none');
+            document.getElementById('submitBtn').className = 'btn-primary w-full btn-lg';
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
             updateCategoryOptions(btn.dataset.month);
         }
     })();
