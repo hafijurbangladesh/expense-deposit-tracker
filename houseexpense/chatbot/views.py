@@ -4,7 +4,9 @@ import logging
 import anthropic
 import requests
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
@@ -26,6 +28,64 @@ def _get_conversation_history(phone_number: str, limit: int = 10) -> list[dict]:
         history.append({'role': role, 'content': msg.message})
     return history
 
+
+# ---------------------------------------------------------------------------
+# Web chatbot (system UI)
+# ---------------------------------------------------------------------------
+
+SYSTEM_PROMPT = (
+    'You are a helpful assistant for Samprity Abason, a house expense management system. '
+    'You help flat owners and managers with questions about expenses, service charges, '
+    'payments, reports, and general house management queries. '
+    'Keep replies concise, clear, and friendly.'
+)
+
+
+@login_required
+def web_chat(request):
+    if request.method == 'GET':
+        if request.GET.get('new'):
+            request.session.pop('web_chat_history', None)
+        return render(request, 'chatbot/chat.html')
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_message = data.get('message', '').strip()
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid request'}, status=400)
+
+        if not user_message:
+            return JsonResponse({'error': 'Empty message'}, status=400)
+
+        history = request.session.get('web_chat_history', [])
+        history.append({'role': 'user', 'content': user_message})
+
+        try:
+            client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+            response = client.messages.create(
+                model='claude-haiku-4-5-20251001',
+                max_tokens=1024,
+                system=SYSTEM_PROMPT,
+                messages=history[-20:],
+            )
+            reply = response.content[0].text
+        except Exception as exc:
+            logger.error('Claude API error: %s', exc)
+            return JsonResponse({'error': 'AI service unavailable. Please try again.'}, status=500)
+
+        history.append({'role': 'assistant', 'content': reply})
+        request.session['web_chat_history'] = history
+        request.session.modified = True
+
+        return JsonResponse({'reply': reply})
+
+    return HttpResponse(status=405)
+
+
+# ---------------------------------------------------------------------------
+# WhatsApp helpers
+# ---------------------------------------------------------------------------
 
 def _ask_claude(phone_number: str, user_message: str) -> str:
     """Send message to Claude with conversation history and return reply text."""
