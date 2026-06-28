@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'houseexpense.accounts.apps.AccountsConfig',
     'houseexpense.dashboard.apps.DashboardConfig',
     'houseexpense.reports.apps.ReportsConfig',
+    'houseexpense.chatbot.apps.ChatbotConfig',
 ]
 
 MIDDLEWARE = [
@@ -159,3 +160,12 @@ USER_ROLES = [
     ('manager', 'Manager'),
     ('flat_owner', 'Flat Owner'),
 ]
+
+# WhatsApp Business API
+WHATSAPP_TOKEN = config('WHATSAPP_TOKEN', default='')
+WHATSAPP_PHONE_NUMBER_ID = config('PHONE_NUMBER_ID', default='')
+WHATSAPP_WABA_ID = config('WABA_ID', default='')
+WHATSAPP_VERIFY_TOKEN = config('VERIFY_TOKEN', default='')
+
+# Anthropic / Claude AI
+ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')

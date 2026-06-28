@@ -11,6 +11,7 @@ urlpatterns = [
     path('accounts/', include('houseexpense.accounts.urls')),
     path('dashboard/', include('houseexpense.dashboard.urls')),
     path('reports/', include('houseexpense.reports.urls')),
+    path('chatbot/', include('houseexpense.chatbot.urls')),
     path('', include('houseexpense.core.urls')),
 ]
 
