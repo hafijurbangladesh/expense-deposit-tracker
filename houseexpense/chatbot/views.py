@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import date
 
 import anthropic
 import requests
@@ -11,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
 from .models import ChatMessage
+from houseexpense.core.models import Deposit, Expense, Flat, House, MonthlySummary
 
 logger = logging.getLogger(__name__)
 
@@ -33,12 +35,103 @@ def _get_conversation_history(phone_number: str, limit: int = 10) -> list[dict]:
 # Web chatbot (system UI)
 # ---------------------------------------------------------------------------
 
-SYSTEM_PROMPT = (
-    'You are a helpful assistant for Samprity Abason, a house expense management system. '
-    'You help flat owners and managers with questions about expenses, service charges, '
-    'payments, reports, and general house management queries. '
-    'Keep replies concise, clear, and friendly.'
-)
+def _prev_month(d):
+    if d.month == 1:
+        return d.replace(year=d.year - 1, month=12)
+    return d.replace(month=d.month - 1)
+
+
+def _build_user_context(user) -> str:
+    today = date.today()
+    current_month = today.replace(day=1)
+    three_months_ago = _prev_month(_prev_month(current_month))
+
+    lines = [
+        f"=== LIVE DATA FROM SAMPRITY ABASON SYSTEM ===",
+        f"User: {user.get_full_name() or user.username}",
+        f"Role: {user.get_role_display()}",
+        f"Today: {today.strftime('%B %d, %Y')}",
+    ]
+
+    # Flat owner's own flats
+    flats = list(Flat.objects.filter(owner=user).select_related('house'))
+    if flats:
+        lines.append("\n--- Your Flats ---")
+        for flat in flats:
+            lines.append(
+                f"Flat {flat.flat_number} | {flat.house.name} | "
+                f"Monthly Charge: ৳{flat.monthly_charge}"
+            )
+
+    # Deposits for flat owner (last 3 months)
+    if flats:
+        deposits = Deposit.objects.filter(
+            flat__in=flats, month__gte=three_months_ago
+        ).select_related('category', 'flat').order_by('-month', '-deposit_date')
+
+        lines.append("\n--- Your Deposits (Last 3 Months) ---")
+        if deposits.exists():
+            for d in deposits:
+                lines.append(
+                    f"{d.month.strftime('%B %Y')} | ৳{d.amount} | "
+                    f"{d.category.name if d.category else 'Deposit'} | "
+                    f"Flat {d.flat.flat_number} | Date: {d.deposit_date}"
+                )
+        else:
+            lines.append("No deposits in the last 3 months.")
+
+    # Houses: flat owner's houses + manager's house
+    house_set = {flat.house for flat in flats}
+    try:
+        if user.role == 'manager' and hasattr(user, 'managed_house'):
+            house_set.add(user.managed_house)
+    except House.DoesNotExist:
+        pass
+
+    for house in house_set:
+        lines.append(f"\n--- House: {house.name} ---")
+
+        # Monthly summaries
+        summaries = MonthlySummary.objects.filter(
+            house=house, month__gte=three_months_ago
+        ).order_by('-month')
+        if summaries.exists():
+            lines.append("Monthly Summaries:")
+            for s in summaries:
+                lines.append(
+                    f"  {s.month.strftime('%B %Y')}: "
+                    f"Income=৳{s.total_deposits} | "
+                    f"Expenses=৳{s.total_expenses} | "
+                    f"Balance=৳{s.balance}"
+                )
+
+        # Manager sees all expenses and deposits
+        if user.role == 'manager':
+            expenses = Expense.objects.filter(
+                house=house, month__gte=three_months_ago
+            ).select_related('category').order_by('-month', '-bill_date')
+            if expenses.exists():
+                lines.append("Expenses:")
+                for e in expenses:
+                    lines.append(
+                        f"  {e.month.strftime('%B %Y')} | ৳{e.amount} | "
+                        f"{e.category.name if e.category else 'Expense'} | "
+                        f"{e.description[:60] if e.description else ''}"
+                    )
+
+            all_deposits = Deposit.objects.filter(
+                house=house, month__gte=three_months_ago
+            ).select_related('category', 'flat').order_by('-month', '-deposit_date')
+            if all_deposits.exists():
+                lines.append("All Deposits:")
+                for d in all_deposits:
+                    flat_info = f"Flat {d.flat.flat_number}" if d.flat else "General"
+                    lines.append(
+                        f"  {d.month.strftime('%B %Y')} | ৳{d.amount} | "
+                        f"{flat_info} | {d.category.name if d.category else 'Deposit'}"
+                    )
+
+    return '\n'.join(lines)
 
 
 @login_required
@@ -58,6 +151,15 @@ def web_chat(request):
         if not user_message:
             return JsonResponse({'error': 'Empty message'}, status=400)
 
+        user_context = _build_user_context(request.user)
+        system_prompt = (
+            'You are a helpful AI assistant for Samprity Abason, a house expense management system. '
+            'You have access to the user\'s real data shown below. '
+            'Use this data to answer questions accurately and specifically. '
+            'Format amounts with the ৳ symbol. Be concise and friendly.\n\n'
+            + user_context
+        )
+
         history = request.session.get('web_chat_history', [])
         history.append({'role': 'user', 'content': user_message})
 
@@ -66,7 +168,7 @@ def web_chat(request):
             response = client.messages.create(
                 model='claude-haiku-4-5-20251001',
                 max_tokens=1024,
-                system=SYSTEM_PROMPT,
+                system=system_prompt,
                 messages=history[-20:],
             )
             reply = response.content[0].text
